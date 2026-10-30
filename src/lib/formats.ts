@@ -164,9 +164,18 @@ export function qualityLabel(quality: QualityPreset): string {
   return QUALITY_PRESETS.find((preset) => preset.id === quality)?.label ?? quality;
 }
 
-/** A video file can always become audio; audio cannot become video. */
-export function canTarget(source: MediaKind, target: TargetFormat): boolean {
+/**
+ * A video file can always become audio; audio cannot become video.
+ * `outputKind` narrows it further when a preset locked the output family
+ * (e.g. "Video a audio" only accepts audio containers).
+ */
+export function canTarget(
+  source: MediaKind,
+  target: TargetFormat,
+  outputKind?: MediaKind | null,
+): boolean {
   const spec = FORMATS[target];
+  if (outputKind && spec.kind !== outputKind) return false;
   if (source === "video") return true;
   return spec.kind === "audio";
 }
@@ -174,10 +183,20 @@ export function canTarget(source: MediaKind, target: TargetFormat): boolean {
 /**
  * Target formats that make sense for a concrete file, in display order.
  * Video sources get video + audio outputs; audio sources only audio.
+ * A preset can pass `outputKind` to offer a single family.
  */
-export function availableTargets(source: MediaKind): TargetFormat[] {
-  const video = source === "video" ? [...VIDEO_FORMATS] : [];
-  return [...video, ...AUDIO_FORMATS];
+export function availableTargets(
+  source: MediaKind,
+  outputKind?: MediaKind | null,
+): TargetFormat[] {
+  const targets =
+    source === "video"
+      ? [...VIDEO_FORMATS, ...AUDIO_FORMATS]
+      : [...AUDIO_FORMATS];
+
+  return outputKind
+    ? targets.filter((target) => FORMATS[target].kind === outputKind)
+    : targets;
 }
 
 export type ConversionPreset = {

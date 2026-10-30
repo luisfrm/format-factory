@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
+  ACCEPTED_EXTENSIONS,
+  SUPPORTED_AUDIO_EXTENSIONS,
+  SUPPORTED_VIDEO_EXTENSIONS,
+  acceptFor,
   buildOutputPath,
+  extensionsFor,
   extname,
   humanBytes,
   humanClock,
@@ -78,6 +83,41 @@ describe("kind detection", () => {
     expect(isSupportedFile("files-mock/audio1.mp3")).toBe(true);
     expect(isSupportedFile("files-mock/audio2.m4a")).toBe(true);
     expect(isSupportedFile("files-mock/video1.mp4")).toBe(true);
+  });
+});
+
+describe("intake filters", () => {
+  it("only lists video extensions for a video intake", () => {
+    const extensions = extensionsFor("video");
+    expect(extensions).toEqual(SUPPORTED_VIDEO_EXTENSIONS);
+    expect(extensions).toContain("mkv");
+    expect(extensions).not.toContain("mp3");
+  });
+
+  it("only lists audio extensions for an audio intake", () => {
+    const extensions = extensionsFor("audio");
+    expect(extensions).toEqual(SUPPORTED_AUDIO_EXTENSIONS);
+    expect(extensions).toContain("flac");
+    expect(extensions).not.toContain("mp4");
+  });
+
+  it("accepts everything when the intake is open", () => {
+    expect(extensionsFor(null)).toEqual(ACCEPTED_EXTENSIONS);
+    expect(extensionsFor()).toEqual(ACCEPTED_EXTENSIONS);
+  });
+
+  it("builds the accept attribute for the intake", () => {
+    expect(acceptFor("audio")).toBe(
+      SUPPORTED_AUDIO_EXTENSIONS.map((ext) => `.${ext}`).join(","),
+    );
+  });
+
+  it("rejects files outside the intake", () => {
+    expect(isSupportedFile("files-mock/video1.mp4", "video")).toBe(true);
+    expect(isSupportedFile("files-mock/audio1.mp3", "video")).toBe(false);
+    expect(isSupportedFile("files-mock/audio1.mp3", "audio")).toBe(true);
+    expect(isSupportedFile("files-mock/video1.mp4", "audio")).toBe(false);
+    expect(isSupportedFile("files-mock/notes.txt", "video")).toBe(false);
   });
 });
 

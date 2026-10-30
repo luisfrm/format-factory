@@ -33,6 +33,12 @@ export function BatchBoard() {
   const pending = pendingFiles(files);
   const totalBytes = files.reduce((sum, file) => sum + file.bytes, 0);
   const videos = files.filter((file) => file.kind === "video").length;
+  // "Apply to all" only offers one family when the whole batch is locked to it.
+  const sharedOutputKind = files.every(
+    (file) => file.outputKind === files[0]?.outputKind,
+  )
+    ? (files[0]?.outputKind ?? null)
+    : null;
 
   const jobsById = useMemo(
     () => new Map(jobs.map((job) => [job.id, job])),
@@ -89,6 +95,7 @@ export function BatchBoard() {
           <TargetPicker
             value={files[0].target}
             source="video"
+            outputKind={sharedOutputKind}
             onChange={applyTargetToAll}
             disabled={summary.active > 0}
             label="Aplicar formato de salida a todos los archivos"

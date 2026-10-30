@@ -45,7 +45,7 @@ function PresetCard({ preset }: { preset: ConversionPreset }) {
   return (
     <button
       type="button"
-      onClick={() => void pickFilesWithTarget(preset.target)}
+      onClick={() => void pickFilesWithTarget(preset.target, preset.source)}
       className={cn(
         "group flex h-full flex-col justify-between gap-3 rounded-card border border-border bg-surface/60 p-3.5 text-left",
         "transition-[background-color,border-color,transform] duration-(--dur-base) ease-standard",
@@ -85,9 +85,11 @@ function PresetCard({ preset }: { preset: ConversionPreset }) {
 
       <div className="flex items-center justify-between gap-2 border-t border-border pt-2.5">
         <span className="flex items-center gap-1.5 font-mono text-[10px] text-subtle">
-          <span>{spec.container}</span>
+          <span>{preset.source === "video" ? "VIDEO" : "AUDIO"}</span>
+          <span className="text-subtle/50">→</span>
+          <span className="text-text/70">{spec.label}</span>
           <span className="text-subtle/50">•</span>
-          <span>{spec.vcodec ?? spec.acodec}</span>
+          <span>{spec.container}</span>
         </span>
         <ArrowRight
           size={14}
