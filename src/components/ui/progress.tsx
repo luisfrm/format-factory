@@ -16,7 +16,7 @@ export function Progress({
   size = "sm",
   className,
   glow = true,
-}: ProgressProps) {
+}: Readonly<ProgressProps>) {
   const percent = clampPercent(value);
 
   return (

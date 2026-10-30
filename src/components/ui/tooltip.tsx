@@ -2,7 +2,7 @@ import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
-export function TooltipProvider({ children }: { children: ReactNode }) {
+export function TooltipProvider({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <TooltipPrimitive.Provider delayDuration={350} skipDelayDuration={120}>
       {children}
@@ -17,7 +17,7 @@ type TooltipProps = {
   className?: string;
 };
 
-export function Tooltip({ label, children, side = "top", className }: TooltipProps) {
+export function Tooltip({ label, children, side = "top", className }: Readonly<TooltipProps>) {
   return (
     <TooltipPrimitive.Root>
       <TooltipPrimitive.Trigger asChild>{children}</TooltipPrimitive.Trigger>
