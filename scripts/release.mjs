@@ -5,9 +5,13 @@
  * CI takes it from there: if no release exists for that version, it builds the
  * three installers and publishes them. The tag is created by CI, never here.
  *
+ * Se ejecuta SIEMPRE desde master, limpio y al día: el push va directo a la
+ * rama principal, así que publicar desde una rama de trabajo arrastraría sus
+ * commits sin revisión.
+ *
  * Usage:
- *   node scripts/release.mjs patch
- *   node scripts/release.mjs minor --no-push
+ *   pnpm release patch
+ *   pnpm release minor --no-push
  */
 import { execFileSync } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
@@ -24,6 +28,49 @@ if (!BUMPS.includes(type)) {
   process.exit(1);
 }
 
+const git = (...args) =>
+  execFileSync("git", args, { cwd: root, stdio: "inherit" });
+
+const gitOutput = (...args) =>
+  execFileSync("git", args, { cwd: root, encoding: "utf8" }).trim();
+
+function fail(message) {
+  console.error(`✖ ${message}`);
+  process.exit(1);
+}
+
+/* ------------------------------------------------------------------ */
+/* Preflight: nunca publicar desde el sitio equivocado                 */
+/* ------------------------------------------------------------------ */
+
+const branch = gitOutput("rev-parse", "--abbrev-ref", "HEAD");
+if (branch !== "master") {
+  fail(
+    `estás en "${branch}". Los releases se publican desde master.\n` +
+      `  git checkout master && git pull && pnpm release ${type}`,
+  );
+}
+
+if (gitOutput("status", "--porcelain", "--untracked-files=no")) {
+  fail(
+    "hay cambios sin commitear. Haz commit o guárdalos antes de publicar:\n" +
+      "  git status",
+  );
+}
+
+try {
+  git("fetch", "origin", "master");
+} catch {
+  fail("no se pudo contactar con origin. Revisa tu conexión.");
+}
+
+const behind = Number(gitOutput("rev-list", "--count", "HEAD..origin/master"));
+if (behind > 0) {
+  fail(`tu master está ${behind} commit(s) por detrás de origin. Ejecuta git pull.`);
+}
+
+/* ------------------------------------------------------------------ */
+
 function bump(version, kind) {
   const [major, minor, patch] = version.split(".").map(Number);
   if (kind === "major") return `${major + 1}.0.0`;
@@ -34,41 +81,40 @@ function bump(version, kind) {
 const packagePath = path.join(root, "package.json");
 const raw = readFileSync(packagePath, "utf8");
 const pkg = JSON.parse(raw);
-const next = bump(pkg.version, type);
+
+const current = pkg.version;
+const next = bump(current, type);
 
 // Preserve the original formatting: only the version line changes.
-const updated = raw.replace(
-  /("version":\s*")[^"]+(")/,
-  `$1${next}$2`,
-);
+const updated = raw.replace(/("version":\s*")[^"]+(")/, `$1${next}$2`);
 
 if (updated === raw) {
-  console.error("✖ No se pudo actualizar la versión en package.json");
-  process.exit(1);
+  fail("no se pudo actualizar la versión en package.json");
 }
 
 writeFileSync(packagePath, updated);
-console.log(`✔ ${pkg.version} → ${next}`);
+console.log(`✔ ${current} → ${next}`);
 
 execFileSync("node", [path.join(import.meta.dirname, "sync-version.mjs")], {
   cwd: root,
   stdio: "inherit",
 });
 
-const git = (...args) =>
-  execFileSync("git", args, { cwd: root, stdio: "inherit" });
-
 git("add", "package.json", "src-tauri/Cargo.toml", "src-tauri/Cargo.lock");
 git("commit", "-m", `chore(release): v${next}`);
 
 if (noPush) {
-  console.log(`\n✔ Commit creado. Sin push (--no-push).`);
-  console.log(`  git push origin master`);
+  console.log("\n✔ Commit creado. Sin push (--no-push).");
+  console.log("  git push origin master");
   process.exit(0);
 }
 
 git("push", "origin", "HEAD:master");
 
+const remote = gitOutput("remote", "get-url", "origin")
+  .replace(/\.git$/, "")
+  .replace(/^git@github\.com:/, "https://github.com/");
+
 console.log(`\n✔ v${next} publicado en master.`);
 console.log("  CI compilará Windows, Linux y macOS y creará el release.");
-console.log("  https://github.com/luisfrm/format-factory/releases");
+console.log(`  ${remote}/releases`);
