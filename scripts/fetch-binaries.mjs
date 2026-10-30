@@ -9,7 +9,7 @@
  * what is missing and prints the exact command to fix it.
  */
 import { execFileSync } from "node:child_process";
-import { existsSync, mkdirSync, readdirSync } from "node:fs";
+import { mkdirSync, readdirSync } from "node:fs";
 import path from "node:path";
 import process from "node:process";
 
@@ -58,4 +58,5 @@ console.log(
   "Mientras tanto la app funciona, pero las conversiones no estarán disponibles.",
 );
 
-process.exit(existsSync(BINARIES_DIR) ? 0 : 1);
+// Failing here keeps `pnpm build` from shipping a binary that cannot convert.
+process.exit(1);
