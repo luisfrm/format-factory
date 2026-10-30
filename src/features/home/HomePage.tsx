@@ -1,14 +1,12 @@
 import { FolderOpen } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
+import { BatchBoard } from "@/components/conversion/BatchBoard";
 import { DropZone } from "@/components/conversion/DropZone";
 import { PresetGrid } from "@/components/conversion/PresetGrid";
-import { QueuePanel } from "@/components/conversion/QueuePanel";
-import { StagedList } from "@/components/conversion/StagedList";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { QUALITY_PRESETS, type QualityPreset } from "@/lib/formats";
 import { useConverterStore } from "@/store/converter-store";
-import { useQueueStore } from "@/store/queue-store";
 
 export function HomePage() {
   const navigate = useNavigate();
@@ -18,12 +16,6 @@ export function HomePage() {
   const outputDirectory = useConverterStore((state) => state.outputDirectory);
   const pickOutputDirectory = useConverterStore(
     (state) => state.pickOutputDirectory,
-  );
-  const jobCount = useQueueStore((state) => state.jobs.length);
-  const hasActiveJobs = useQueueStore((state) =>
-    state.jobs.some(
-      (job) => job.status === "running" || job.status === "queued",
-    ),
   );
 
   const hasFiles = files.length > 0;
@@ -60,9 +52,7 @@ export function HomePage() {
             className="flex h-8 max-w-[260px] items-center gap-1.5 rounded-control border border-border bg-surface px-2.5 font-mono text-[10px] text-muted transition-colors duration-(--dur-fast) hover:border-border-strong hover:text-text"
           >
             <FolderOpen size={13} className="shrink-0 text-subtle" />
-            <span className="truncate">
-              {outputDirectory ?? "Misma carpeta"}
-            </span>
+            <span className="truncate">{outputDirectory ?? "Misma carpeta"}</span>
           </button>
         </div>
       </header>
@@ -77,8 +67,8 @@ export function HomePage() {
             transition={{ duration: 0.2, ease: [0.2, 0.8, 0.2, 1] }}
             className="flex flex-col gap-3"
           >
+            <BatchBoard />
             <DropZone compact />
-            <StagedList />
           </motion.div>
         ) : (
           <motion.div
@@ -93,17 +83,15 @@ export function HomePage() {
         )}
       </AnimatePresence>
 
-      {hasActiveJobs && <QueuePanel variant="dock" />}
-
       {!hasFiles && <PresetGrid />}
 
-      {jobCount > 0 && (
+      {hasFiles && (
         <button
           type="button"
           onClick={() => navigate("/queue")}
           className="text-center font-mono text-[10px] text-subtle transition-colors hover:text-text"
         >
-          Ver cola completa y registros →
+          Ver cola completa e historial →
         </button>
       )}
     </div>

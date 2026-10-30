@@ -130,8 +130,8 @@ Detalle del sistema en [`DESIGN.md`](./DESIGN.md).
 
 - [x] Shell: sidebar colapsable, header, 4 rutas
 - [x] Primitivas de UI con estados de foco y teclado
-- [x] Conversor: dropzone nativo, staging multiarchivo, destino por archivo
-- [x] Lote: aplicar un destino a todos, cola serial con progreso real
+- [x] Conversor: dropzone nativo, lote multiarchivo con estado en vivo por fila
+- [x] Lote: aplicar un destino a todos, añadir más al lote sin perder lo completado
 - [x] Historial persistido con ahorro de tamaño
 - [x] Ajustes: motores, carpeta de salida, calidad
 - [x] 67 tests TS + 14 tests Rust
