@@ -1,38 +1,108 @@
-name: Build installers
+name: Release
 
 on:
-  workflow_dispatch:
   push:
-    tags:
-      - "v*"
+    branches: [master]
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
+      - ".github/ISSUE_TEMPLATE/**"
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Republicar aunque el release de esta versión ya exista"
+        type: boolean
+        default: false
 
 concurrency:
-  group: build-${{ github.ref }}
-  cancel-in-progress: true
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+# Least privilege: only the publish job may write.
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
 
 jobs:
+  # ------------------------------------------------------------------
+  # 1. Decide whether this run publishes anything
+  # ------------------------------------------------------------------
+  version:
+    name: Resolve version
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      version: ${{ steps.read.outputs.version }}
+      publish: ${{ steps.read.outputs.publish }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Read version and release state
+        id: read
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+          # Pull requests and tag-less events never publish.
+          if [ "${{ github.event_name }}" != "push" ] && [ "${{ github.event_name }}" != "workflow_dispatch" ]; then
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [ "${{ inputs.force }}" = "true" ]; then
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if gh release view "v$VERSION" >/dev/null 2>&1; then
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::v$VERSION ya existe; solo se compila para verificar."
+          else
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::v$VERSION es nueva; se publicará al terminar."
+          fi
+
+  # ------------------------------------------------------------------
+  # 2. Build the three platforms in parallel
+  # ------------------------------------------------------------------
   build:
     name: ${{ matrix.label }}
+    needs: version
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
     strategy:
       fail-fast: false
       matrix:
         include:
-          - label: Windows (x64)
+          - label: Windows x64
             os: windows-latest
             bundles: msi,nsis
             artifact: windows-x64
-          - label: Linux (x64)
+            suffix: windows-x64
+          - label: Linux x64
             os: ubuntu-22.04
             bundles: deb,appimage
             artifact: linux-x64
-          - label: macOS (Apple Silicon)
+            suffix: linux-x64
+          - label: macOS arm64
             os: macos-latest
             bundles: dmg
             artifact: macos-arm64
-
+            suffix: macos-arm64
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - uses: pnpm/action-setup@v4
         with:
@@ -47,7 +117,7 @@ jobs:
 
       - uses: Swatinem/rust-cache@v2
         with:
-          workspaces: src-tauri
+          workspaces: src-tauri -> target
 
       - name: Install Linux system dependencies
         if: runner.os == 'Linux'
@@ -64,21 +134,85 @@ jobs:
       - name: Install JS dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Provision FFmpeg sidecars for this platform
+      - name: Provision FFmpeg sidecars
         run: pnpm setup:binaries
 
-      - name: Run tests
-        run: pnpm test && pnpm test:rust
+      # generate_context! embeds `dist/`, so the frontend must exist before any
+      # Rust compilation (including `cargo test`).
+      - name: Build frontend
+        run: pnpm bundle
 
-      - name: Build bundles
+      - name: Unit tests
+        run: pnpm test
+
+      - name: Rust tests
+        run: pnpm test:rust
+
+      - name: Package installers
         run: pnpm tauri build --bundles ${{ matrix.bundles }}
 
-      - name: Upload artifacts
+      - name: Normalize artifact names
+        run: node scripts/collect-artifacts.mjs --from src-tauri/target/release/bundle --out stage --prefix "Format-Factory_${{ needs.version.outputs.version }}_${{ matrix.suffix }}"
+
+      - name: Upload platform files
         uses: actions/upload-artifact@v4
         with:
-          name: format-factory-${{ matrix.artifact }}
+          name: release-files-${{ matrix.artifact }}
+          path: stage/*
+          retention-days: 7
           if-no-files-found: error
-          path: |
-            src-tauri/target/release/bundle/**
-            src-tauri/target/release/format-factory
-            src-tauri/target/release/format-factory.exe
+
+  # ------------------------------------------------------------------
+  # 3. Publish a single GitHub Release with every platform
+  # ------------------------------------------------------------------
+  publish:
+    name: Publish release
+    needs: [version, build]
+    if: needs.version.outputs.publish == 'true' || inputs.force
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: release-files-*
+          merge-multiple: true
+          path: release
+
+      - name: Add install instructions
+        run: cp docs/INSTALL.md release/INSTALL.md
+
+      - name: Generate checksums
+        run: node scripts/collect-artifacts.mjs --checksums release
+
+      - name: List release contents
+        run: ls -lh release
+
+      - name: Create or update the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          VERSION: ${{ needs.version.outputs.version }}
+        run: |
+          set -euo pipefail
+          TAG="v$VERSION"
+
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Actualizando assets de $TAG"
+            gh release upload "$TAG" release/* --clobber
+          else
+            gh release create "$TAG" \
+              --target "$GITHUB_SHA" \
+              --title "Format Factory $TAG" \
+              --generate-notes
+            gh release upload "$TAG" release/* --clobber
+          fi
+
+          echo "### Release $TAG" >> "$GITHUB_STEP_SUMMARY"
+          echo "https://github.com/$GH_REPO/releases/tag/$TAG" >> "$GITHUB_STEP_SUMMARY"
