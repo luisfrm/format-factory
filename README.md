@@ -15,15 +15,10 @@ Conversor de archivos de escritorio: video, audio y lotes mixtos. FFmpeg hace el
 | Rust + cargo | ≥ 1.90 | ✅ 1.98 |
 | FFmpeg / FFprobe | 6+ | ✅ sidecars en `src-tauri/binaries/` |
 
-Los binarios **no están versionados** (pesan ~145 MB). Para restaurarlos:
-
-```powershell
-node node_modules/ffmpeg-static/install.js
-Copy-Item node_modules\ffmpeg-static\ffmpeg.exe "src-tauri\binaries\ffmpeg-x86_64-pc-windows-msvc.exe"
-Copy-Item node_modules\ffprobe-static\bin\win32\x64\ffprobe.exe "src-tauri\binaries\ffprobe-x86_64-pc-windows-msvc.exe"
-```
-
-`pnpm setup:binaries` verifica que estén en su sitio.
+Los binarios **no están versionados** (pesan ~145 MB). `pnpm setup:binaries` los
+copia desde las dependencias de desarrollo (`ffmpeg-static` / `ffprobe-static`)
+con el nombre y el target triple que Tauri espera. Si algo falla, imprime las
+instrucciones manuales para tu sistema.
 
 ---
 
@@ -43,8 +38,22 @@ Copy-Item node_modules\ffprobe-static\bin\win32\x64\ffprobe.exe "src-tauri\binar
 | `pnpm typecheck` | Solo TypeScript |
 | `pnpm setup:binaries` | Verifica los sidecars de FFmpeg |
 
-`build` y `build:installer` primero validan los sidecars y **fallan a propósito** si
-falta FFmpeg, para no distribuir un binario que no puede convertir.
+`build` y `build:installer` provisionan los sidecars automáticamente desde
+`node_modules` (ffmpeg-static / ffprobe-static) y **fallan con instrucciones
+claras** si no hay binarios, para no distribuir un ejecutable que no puede convertir.
+
+### Dónde queda cada cosa
+
+| Comando | Windows | macOS | Linux |
+|---|---|---|---|
+| `pnpm build` | `src-tauri/target/release/format-factory.exe` | `src-tauri/target/release/format-factory` | `src-tauri/target/release/format-factory` |
+| `pnpm build:installer` | `bundle/msi/*.msi` · `bundle/nsis/*-setup.exe` | `bundle/dmg/*.dmg` | `bundle/deb/*.deb` · `bundle/appimage/*.AppImage` |
+
+**Tauri no compila para otros sistemas.** Cada `pnpm build:installer` produce
+solo los artefactos del sistema donde corre: en Windows no vas a encontrar el
+`.dmg` ni el `.AppImage`. Para tener los tres hay que compilar en cada sistema —
+el workflow [`.github/workflows/build.yml`](.github/workflows/build.yml) hace
+exactamente eso en paralelo y sube los artefactos como descarga.
 
 > En `pnpm dev:web` el navegador no puede leer rutas reales ni lanzar procesos, así que
 > `src/lib/backend.ts` sustituye el motor por una cola simulada. Toda la UI,
