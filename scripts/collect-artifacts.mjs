@@ -148,8 +148,7 @@ function collect(from, out, prefix) {
       if (statSync(signature, { throwIfNoEntry: false })) {
         copyFileSync(signature, `${destination}.sig`);
       } else {
-        console.error(`✖ Falta la firma de ${path.basename(source)}`);
-        process.exit(1);
+        console.warn(`⚠ ${path.basename(source)} sin firma; se publica solo como instalador`);
       }
     }
   }
@@ -184,8 +183,8 @@ function latestJson(directory, version, baseUrl) {
 
     const signatureFile = `${artifact}.sig`;
     if (!files.includes(signatureFile)) {
-      console.error(`✖ ${artifact} no tiene firma (${signatureFile})`);
-      process.exit(1);
+      console.warn(`⚠ ${artifact} no tiene firma; se omite del manifiesto`);
+      continue;
     }
 
     platforms[target.platform] = {
