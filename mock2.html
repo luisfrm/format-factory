@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <meta content="web_dashboard" name="shell-type" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com" rel="preconnect" />
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+  <style>
+    @layer base {
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        overscroll-behavior: none;
+      }
+
+      main>:first-child {
+        margin-top: 0 !important;
+      }
+
+      main>:last-child {
+        margin-bottom: 0 !important;
+      }
+    }
+
+    ::-webkit-scrollbar {
+      display: none;
+    }
+  </style>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script
+    id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "primary-fixed": "#ffdadb", "on-surface-variant": "#e3bdbf", "surface-container-lowest": "#0c0e14", "surface-bright": "#373940", "surface": "#111319", "primary-fixed-dim": "#ffb2b7", "surface-tint": "#ffb2b7", "error-container": "#93000a", "on-primary-fixed-variant": "#92002a", "surface-container": "#1e1f26", "surface-container-high": "#282a30", "tertiary-fixed": "#6ffbbe", "on-secondary-fixed-variant": "#004c69", "on-error-container": "#ffdad6", "on-primary-container": "#5b0017", "on-secondary-fixed": "#001e2c", "surface-container-highest": "#33343b", "on-primary-fixed": "#40000d", "background": "#111319", "on-primary": "#67001b", "on-tertiary-fixed-variant": "#005236", "secondary-container": "#00a6e0", "outline-variant": "#5b4041", "inverse-primary": "#bc0b3b", "primary": "#ffb2b7", "error": "#ffb4ab", "on-error": "#690005", "tertiary": "#4edea3", "surface-dim": "#111319", "on-background": "#e2e2eb", "on-surface": "#e2e2eb", "surface-variant": "#33343b", "tertiary-fixed-dim": "#4edea3", "on-tertiary": "#003824", "on-tertiary-fixed": "#002113", "outline": "#aa888a", "primary-container": "#ff516a", "on-secondary": "#00354a", "inverse-on-surface": "#2e3037", "secondary-fixed": "#c4e7ff", "surface-container-low": "#191b22", "tertiary-container": "#00a572", "inverse-surface": "#e2e2eb", "on-secondary-container": "#00374d", "on-tertiary-container": "#00311f", "secondary": "#7bd0ff", "secondary-fixed-dim": "#7bd0ff" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "gutter": "0.75rem", "space-sm": "0.5rem", "space-xl": "1.75rem", "space-xs": "0.25rem", "space-md": "0.75rem", "space-lg": "1.25rem", "margin": "1rem" }, "fontFamily": { "headline-xl": ["Inter"], "headline-lg": ["Inter"], "label-code-lg": ["JetBrains Mono"], "headline-md": ["Inter"], "body-md": ["Inter"], "body-sm": ["Inter"], "badge-format": ["JetBrains Mono"], "label-code-sm": ["JetBrains Mono"], "body-lg": ["Inter"] }, "fontSize": { "headline-xl": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.025em", "fontWeight": "600" }], "headline-lg": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.02em", "fontWeight": "600" }], "label-code-lg": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }], "headline-md": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.015em", "fontWeight": "600" }], "body-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "400" }], "body-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.005em", "fontWeight": "400" }], "badge-format": ["10px", { "lineHeight": "12px", "letterSpacing": "0.05em", "fontWeight": "700" }], "label-code-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.03em", "fontWeight": "500" }], "body-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "-0.005em", "fontWeight": "400" }] } } } };</script>
+</head>
+
+<body class="bg-background font-body-md text-on-surface antialiased select-none">
+  <header
+    class="fixed top-0 inset-x-0 h-10 z-50 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.4)] flex items-center justify-between px-space-md select-none">
+    <div class="flex items-center gap-space-md">
+      <div class="flex items-center gap-1.5 pr-space-xs"><span
+          class="w-3 h-3 rounded-full bg-error inline-block opacity-85 hover:opacity-100 transition-opacity cursor-pointer"></span><span
+          class="w-3 h-3 rounded-full bg-tertiary-fixed-dim inline-block opacity-85 hover:opacity-100 transition-opacity cursor-pointer"></span><span
+          class="w-3 h-3 rounded-full bg-tertiary inline-block opacity-85 hover:opacity-100 transition-opacity cursor-pointer"></span>
+      </div>
+      <div class="flex items-center gap-space-xs pl-space-xs"><img alt="Transmute Logo"
+          class="h-8 w-auto object-contain"
+          src="https://lh3.googleusercontent.com/aida/AEtjO1WcU3YFIb2dEFZsvW9Skj3fekN_hVBoesw4ryuQ914ZsH4JlV8mCsm43gTqg_f4pep6LqTUmgeiBnilk8pQr56SGELSe5GLx0SFZIL7GHFvt03Ar8ySghDM9hoUpz6JX9s2pZJrqO_e9JxqFRGoNzo3NlwthcfG66Jt2lPn9LZPjwaZRQmIoN_S1C80rO7nUDcpB485vJKpxlMlhgK1Rokox1oMn71CXMpgxi7KvE4" /><span
+          class="font-headline-md text-headline-md tracking-tight text-on-surface pl-1">Transmute</span><span
+          class="font-badge-format text-badge-format px-1.5 py-0.5 rounded bg-surface-container-high text-primary font-bold ml-1">v2.4
+          Pro</span></div>
+    </div>
+    <div class="flex items-center gap-space-md">
+      <div
+        class="flex items-center gap-space-xs px-2 py-0.5 rounded bg-surface-container-low text-tertiary font-label-code-sm text-label-code-sm">
+        <span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"></span><span>GPU Acceleration: ON</span></div>
+      <div class="flex items-center gap-space-xs pl-space-xs"><button
+          class="w-7 h-7 rounded flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors"><span
+            class="material-symbols-outlined text-[16px]">search</span></button><button
+          class="w-7 h-7 rounded flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors"><span
+            class="material-symbols-outlined text-[16px]">notifications</span></button>
+        <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center ml-1"><span
+            class="material-symbols-outlined text-on-primary text-[18px]">person</span></div>
+      </div>
+    </div>
+  </header>
+  <aside
+    class="fixed left-0 top-10 bottom-0 w-64 bg-surface-container-low/95 backdrop-blur-xl z-40 flex flex-col justify-between py-space-sm shadow-[0_1px_8px_rgba(0,0,0,0.25)]">
+    <div class="flex flex-col gap-space-xs">
+      <div class="flex items-center justify-between px-space-md py-space-xs"><span
+          class="font-badge-format text-badge-format uppercase tracking-widest text-outline">Workspace</span><button
+          class="w-6 h-6 rounded flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors"><span
+            class="material-symbols-outlined text-[16px]">dock_to_left</span></button></div>
+      <nav class="flex flex-col gap-0.5 px-space-xs"
+        data-active-classes="bg-primary-container text-on-primary font-semibold shadow-[0_0_12px_rgba(255,81,106,0.25)]">
+        <a class="flex items-center justify-between px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all"
+          data-path="conversor-rapido" href="#">
+          <div class="flex items-center gap-space-sm"><span
+              class="material-symbols-outlined text-[18px]">bolt</span><span class="font-body-md text-body-md">Conversor
+              Rápido</span></div>
+        </a><a
+          class="flex items-center justify-between px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all"
+          data-path="conversion-por-lotes" href="#">
+          <div class="flex items-center gap-space-sm"><span
+              class="material-symbols-outlined text-[18px]">layers</span><span
+              class="font-body-md text-body-md">Conversión por Lotes</span></div><span
+            class="font-badge-format text-badge-format px-1.5 py-0.5 rounded-full bg-primary text-on-primary font-bold">3</span>
+        </a><a
+          class="flex items-center justify-between px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all"
+          data-path="flujos-de-trabajo" href="#">
+          <div class="flex items-center gap-space-sm"><span
+              class="material-symbols-outlined text-[18px]">alt_route</span><span
+              class="font-body-md text-body-md">Flujos / Presets</span></div>
+        </a><a
+          class="flex items-center justify-between px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all"
+          data-path="historial-descargas" href="#">
+          <div class="flex items-center gap-space-sm"><span
+              class="material-symbols-outlined text-[18px]">history</span><span
+              class="font-body-md text-body-md">Historial &amp; Descargas</span></div>
+        </a><a
+          class="flex items-center justify-between px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all"
+          data-path="herramientas-av" href="#">
+          <div class="flex items-center gap-space-sm"><span
+              class="material-symbols-outlined text-[18px]">construction</span><span
+              class="font-body-md text-body-md">Herramientas A/V</span></div>
+        </a></nav>
+    </div>
+    <div class="px-space-md flex flex-col gap-space-sm">
+      <div class="p-space-sm rounded-lg bg-surface-container-lowest/80 flex flex-col gap-1.5">
+        <div class="flex items-center justify-between font-label-code-sm text-label-code-sm"><span
+            class="text-on-surface-variant">SSD Cache</span><span class="text-on-surface font-semibold">42.8 / 120
+            GB</span></div>
+        <div class="w-full h-1.5 rounded-full bg-surface-container-high overflow-hidden">
+          <div class="h-full w-[35%] bg-primary rounded-full"></div>
+        </div>
+        <div class="flex items-center justify-between pt-1"><span
+            class="font-label-code-sm text-label-code-sm text-on-surface-variant">Engine NVENC</span><span
+            class="font-badge-format text-badge-format text-tertiary uppercase">Activo</span></div>
+      </div>
+      <nav class="flex flex-col" data-active-classes="bg-primary-container text-on-primary font-semibold"><a
+          class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all"
+          data-path="configuracion" href="#"><span class="material-symbols-outlined text-[18px]">settings</span><span
+            class="font-body-md text-body-md">Configuración</span></a></nav>
+    </div>
+  </aside>
+  <div class="pl-64">
+    <main class="relative pt-10 min-h-screen bg-background w-full px-gutter">
+      <div class="flex flex-col w-full">
+        <div class="flex flex-col gap-space-lg pb-12">
+          <!-- Header Control Bar -->
+          <div
+            class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md bg-surface-container-low/80 p-space-md rounded-xl backdrop-blur-md shadow-md">
+            <div class="flex flex-col gap-0.5">
+              <div class="flex items-center gap-space-xs">
+                <span class="font-label-code-sm text-label-code-sm text-primary uppercase tracking-wider">Transmute
+                  Engine</span>
+                <span class="text-on-surface-variant font-label-code-sm text-label-code-sm">/</span>
+                <span class="font-headline-md text-headline-md text-on-surface">Conversor Universal Rápido</span>
+              </div>
+              <p class="font-body-sm text-body-sm text-on-surface-variant">Arrastra cualquier archivo o selecciona un
+                flujo de trabajo optimizado para inicio instantáneo.</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-space-sm">
+              <!-- Preset pills -->
+              <div class="inline-flex p-1 rounded-lg bg-surface-container-lowest/90 shadow-inner">
+                <button
+                  class="px-space-sm py-1 rounded font-body-sm text-body-sm font-semibold bg-primary-container text-on-primary shadow-sm transition-all"
+                  onclick="selectMode(this)">
+                  Auto-detect
+                </button>
+                <button
+                  class="px-space-sm py-1 rounded font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-all"
+                  onclick="selectMode(this)">
+                  Lossless
+                </button>
+                <button
+                  class="px-space-sm py-1 rounded font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-all"
+                  onclick="selectMode(this)">
+                  Ultra-Compresión
+                </button>
+              </div>
+              <div class="h-5 w-px bg-surface-container-highest hidden sm:block"></div>
+              <div class="flex items-center gap-space-xs">
+                <button
+                  class="flex items-center gap-1.5 px-space-sm py-1.5 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors font-body-sm text-body-sm">
+                  <span class="material-symbols-outlined text-[16px] text-on-surface-variant">folder_open</span>
+                  <span>Añadir Carpeta</span>
+                </button>
+                <button
+                  class="flex items-center gap-1.5 px-space-sm py-1.5 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors font-body-sm text-body-sm"
+                  title="Directorio de Salida">
+                  <span class="material-symbols-outlined text-[16px] text-tertiary">save</span>
+                  <span
+                    class="font-label-code-sm text-label-code-sm text-on-surface-variant hidden xl:inline">~/Downloads/Transmute</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <!-- Main Dropzone Canvas -->
+          <div
+            class="relative group cursor-pointer overflow-hidden rounded-xl bg-gradient-to-b from-surface-container-low via-surface-container-lowest to-surface-container-low p-8 lg:p-12 transition-all duration-300 shadow-xl hover:shadow-2xl"
+            id="drop-zone">
+            <!-- Ambient decorative glow -->
+            <div
+              class="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-48 bg-primary-container/10 blur-3xl pointer-events-none rounded-full">
+            </div>
+            <!-- Subtle Tech Grid Canvas watermark -->
+            <div
+              class="absolute inset-0 opacity-[0.03] bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none">
+            </div>
+            <div class="relative z-10 flex flex-col items-center text-center max-w-2xl mx-auto">
+              <div class="relative mb-4">
+                <div
+                  class="w-16 h-16 rounded-2xl bg-surface-container-high/90 flex items-center justify-center text-primary shadow-lg transition-transform duration-300 group-hover:scale-110">
+                  <span class="material-symbols-outlined text-[36px] transition-colors">cloud_upload</span>
+                </div>
+                <div
+                  class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-primary-container flex items-center justify-center text-on-primary">
+                  <span class="material-symbols-outlined text-[14px]">bolt</span>
+                </div>
+              </div>
+              <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight mb-2">
+                Arrastra y suelta archivos aquí para convertir
+              </h2>
+              <p class="font-body-md text-body-md text-on-surface-variant mb-6 max-w-lg">
+                Soporta más de 200 contenedores y códecs con detección autónoma de pistas, hardware encoding y
+                subtítulos incrustados.
+              </p>
+              <!-- Main CTAs -->
+              <div class="flex flex-wrap items-center justify-center gap-space-md mb-8">
+                <button
+                  class="flex items-center gap-space-xs px-space-lg py-2.5 rounded-lg bg-primary-container hover:bg-on-primary-fixed-variant text-on-primary font-body-md text-body-md font-semibold shadow-lg transition-all active:scale-95">
+                  <span class="material-symbols-outlined text-[18px]">add_circle</span>
+                  <span>Examinar Archivos</span>
+                </button>
+                <button
+                  class="flex items-center gap-space-xs px-space-lg py-2.5 rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface font-body-md text-body-md transition-all">
+                  <span class="material-symbols-outlined text-[18px] text-secondary">link</span>
+                  <span>Pegar URL o Stream</span>
+                </button>
+              </div>
+              <!-- Format Matrix Badges -->
+              <div class="flex flex-wrap items-center justify-center gap-space-xs pt-2">
+                <span class="font-label-code-sm text-label-code-sm text-outline px-2 py-0.5">Destacados:</span>
+                <span
+                  class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-container font-label-code-sm text-label-code-sm text-on-surface-variant">
+                  <span class="font-semibold text-primary">MKV</span>
+                  <span class="text-outline">→</span>
+                  <span class="text-on-surface">MP4 (HEVC)</span>
+                </span>
+                <span
+                  class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-container font-label-code-sm text-label-code-sm text-on-surface-variant">
+                  <span class="font-semibold text-secondary">MP4</span>
+                  <span class="text-outline">→</span>
+                  <span class="text-on-surface">AAC HQ</span>
+                </span>
+                <span
+                  class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-container font-label-code-sm text-label-code-sm text-on-surface-variant">
+                  <span class="font-semibold text-tertiary">WAV</span>
+                  <span class="text-outline">→</span>
+                  <span class="text-on-surface">FLAC 24-bit</span>
+                </span>
+                <span
+                  class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-container font-label-code-sm text-label-code-sm text-on-surface-variant">
+                  <span class="font-semibold text-primary-fixed">PDF</span>
+                  <span class="text-outline">→</span>
+                  <span class="text-on-surface">EPUB / DOCX</span>
+                </span>
+                <span
+                  class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-container font-label-code-sm text-label-code-sm text-on-surface-variant">
+                  <span class="font-semibold text-secondary-fixed">HEIC</span>
+                  <span class="text-outline">→</span>
+                  <span class="text-on-surface">AVIF / JPG</span>
+                </span>
+              </div>
+            </div>
+          </div>
+          <!-- Quick Presets / Direct Action Cards -->
+          <div class="flex flex-col gap-space-md">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm px-1">
+              <div class="flex items-center gap-space-sm">
+                <span class="w-2 h-2 rounded-full bg-primary-container"></span>
+                <h3 class="font-headline-md text-headline-md text-on-surface">Conversiones Frecuentes y Acciones
+                  Directas</h3>
+              </div>
+              <div class="flex items-center gap-space-xs bg-surface-container-low px-space-sm py-1 rounded-lg">
+                <span class="material-symbols-outlined text-[16px] text-on-surface-variant">filter_list</span>
+                <input
+                  class="bg-transparent text-on-surface font-body-sm text-body-sm outline-none placeholder:text-outline w-32 sm:w-44"
+                  placeholder="Filtrar presets..." type="text" />
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-space-md">
+              <!-- Tile 1: Video transcoding -->
+              <div
+                class="group flex flex-col justify-between p-space-md rounded-xl bg-surface-container-low hover:bg-surface-container transition-all cursor-pointer shadow-md">
+                <div class="flex flex-col gap-space-sm">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-space-sm">
+                      <div
+                        class="w-9 h-9 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary">
+                        <span class="material-symbols-outlined text-[20px]">movie_filter</span>
+                      </div>
+                      <div class="flex flex-col">
+                        <span class="font-headline-md text-body-lg text-on-surface font-semibold">Video a Video
+                          Universal</span>
+                        <span class="font-label-code-sm text-label-code-sm text-tertiary">NVIDIA NVENC Activo</span>
+                      </div>
+                    </div>
+                    <span
+                      class="font-badge-format text-badge-format px-1.5 py-0.5 rounded bg-surface-container-high text-primary font-bold">4K
+                      / 1080p</span>
+                  </div>
+                  <p class="font-body-sm text-body-sm text-on-surface-variant">Remux y codificación de contenedores MKV,
+                    AVI, MOV a MP4 Web-ready o WebM VP9 sin desincronización de audio.</p>
+                </div>
+                <div class="flex items-center justify-between pt-space-md mt-space-sm">
+                  <div class="flex items-center gap-1.5 font-label-code-sm text-label-code-sm text-outline">
+                    <span>H.264 / AV1</span>
+                    <span>•</span>
+                    <span>CRF 18</span>
+                  </div>
+                  <span
+                    class="material-symbols-outlined text-[18px] text-on-surface-variant group-hover:text-primary transition-colors">arrow_forward</span>
+                </div>
+              </div>
+              <!-- Tile 2: Audio Extraction -->
+              <div
+                class="group flex flex-col justify-between p-space-md rounded-xl bg-surface-container-low hover:bg-surface-container transition-all cursor-pointer shadow-md">
+                <div class="flex flex-col gap-space-sm">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-space-sm">
+                      <div
+                        class="w-9 h-9 rounded-lg bg-surface-container-highest flex items-center justify-center text-secondary">
+                        <span class="material-symbols-outlined text-[20px]">music_cast</span>
+                      </div>
+                      <div class="flex flex-col">
+                        <span class="font-headline-md text-body-lg text-on-surface font-semibold">Extraer Audio de
+                          Video</span>
+                        <span class="font-label-code-sm text-label-code-sm text-on-surface-variant">1-Click Demux</span>
+                      </div>
+                    </div>
+                    <span
+                      class="font-badge-format text-badge-format px-1.5 py-0.5 rounded bg-surface-container-high text-secondary font-bold">320
+                      KBPS</span>
+                  </div>
+                  <p class="font-body-sm text-body-sm text-on-surface-variant">Aísla bandas sonoras de cualquier clip o
+                    streaming exportando directamente a FLAC puro, AAC o MP3 ID3v2.</p>
+                </div>
+                <div class="flex items-center justify-between pt-space-md mt-space-sm">
+                  <div class="flex items-center gap-1.5 font-label-code-sm text-label-code-sm text-outline">
+                    <span>Multi-pista</span>
+                    <span>•</span>
+                    <span>Copia directa</span>
+                  </div>
+                  <span
+                    class="material-symbols-outlined text-[18px] text-on-surface-variant group-hover:text-secondary transition-colors">arrow_forward</span>
+                </div>
+              </div>
+              <!-- Tile 3: Audio Mastering & Normalize -->
+              <div
+                class="group flex flex-col justify-between p-space-md rounded-xl bg-surface-container-low hover:bg-surface-container transition-all cursor-pointer shadow-md">
+                <div class="flex flex-col gap-space-sm">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-space-sm">
+                      <div
+                        class="w-9 h-9 rounded-lg bg-surface-container-highest flex items-center justify-center text-tertiary">
+                        <span class="material-symbols-outlined text-[20px]">graphic_eq</span>
+                      </div>
+                      <div class="flex flex-col">
+                        <span class="font-headline-md text-body-lg text-on-surface font-semibold">Transcodificación de
+                          Audio</span>
+                        <span class="font-label-code-sm text-label-code-sm text-on-surface-variant">EBU R128
+                          Loudness</span>
+                      </div>
+                    </div>
+                    <span
+                      class="font-badge-format text-badge-format px-1.5 py-0.5 rounded bg-surface-container-high text-tertiary font-bold">24-BIT</span>
+                  </div>
+                  <p class="font-body-sm text-body-sm text-on-surface-variant">Conversión por lotes de WAV sin
+                    compresión a Opus, OGG o ALAC con nivelación de volumen para plataformas de podcast.</p>
+                </div>
+                <div class="flex items-center justify-between pt-space-md mt-space-sm">
+                  <div class="flex items-center gap-1.5 font-label-code-sm text-label-code-sm text-outline">
+                    <span>48 kHz</span>
+                    <span>•</span>
+                    <span>True Peak -1dB</span>
+                  </div>
+                  <span
+                    class="material-symbols-outlined text-[18px] text-on-surface-variant group-hover:text-tertiary transition-colors">arrow_forward</span>
+                </div>
+              </div>
+              <!-- Tile 4: Documents and eBooks -->
+              <div
+                class="group flex flex-col justify-between p-space-md rounded-xl bg-surface-container-low hover:bg-surface-container transition-all cursor-pointer shadow-md">
+                <div class="flex flex-col gap-space-sm">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-space-sm">
+                      <div
+                        class="w-9 h-9 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary-fixed">
+                        <span class="material-symbols-outlined text-[20px]">auto_stories</span>
+                      </div>
+                      <div class="flex flex-col">
+                        <span class="font-headline-md text-body-lg text-on-surface font-semibold">Documentos &amp;
+                          eBooks</span>
+                        <span class="font-label-code-sm text-label-code-sm text-on-surface-variant">Motor OCR
+                          Tesseract</span>
+                      </div>
+                    </div>
+                    <span
+                      class="font-badge-format text-badge-format px-1.5 py-0.5 rounded bg-surface-container-high text-primary-fixed font-bold">EPUB
+                      / PDF</span>
+                  </div>
+                  <p class="font-body-sm text-body-sm text-on-surface-variant">Convierte manuales y libros de PDF a
+                    formato reflowable EPUB, extrae tablas a XLSX o limpia tipografías DOCX.</p>
+                </div>
+                <div class="flex items-center justify-between pt-space-md mt-space-sm">
+                  <div class="flex items-center gap-1.5 font-label-code-sm text-label-code-sm text-outline">
+                    <span>Metadatos Calibre</span>
+                    <span>•</span>
+                    <span>Vector</span>
+                  </div>
+                  <span
+                    class="material-symbols-outlined text-[18px] text-on-surface-variant group-hover:text-primary transition-colors">arrow_forward</span>
+                </div>
+              </div>
+              <!-- Tile 5: Images & RAW -->
+              <div
+                class="group flex flex-col justify-between p-space-md rounded-xl bg-surface-container-low hover:bg-surface-container transition-all cursor-pointer shadow-md">
+                <div class="flex flex-col gap-space-sm">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-space-sm">
+                      <div
+                        class="w-9 h-9 rounded-lg bg-surface-container-highest flex items-center justify-center text-secondary-fixed">
+                        <span class="material-symbols-outlined text-[20px]">raw_on</span>
+                      </div>
+                      <div class="flex flex-col">
+                        <span class="font-headline-md text-body-lg text-on-surface font-semibold">Imágenes &amp; RAW
+                          Batch</span>
+                        <span class="font-label-code-sm text-label-code-sm text-on-surface-variant">EXIF Privacy
+                          Strip</span>
+                      </div>
+                    </div>
+                    <span
+                      class="font-badge-format text-badge-format px-1.5 py-0.5 rounded bg-surface-container-high text-secondary-fixed font-bold">AVIF
+                      / WEBP</span>
+                  </div>
+                  <p class="font-body-sm text-body-sm text-on-surface-variant">Procesa fotografías Apple HEIC, Canon CR3
+                    y Sony ARW en lotes directos a formato web ultraligero sin degradación cromática.</p>
+                </div>
+                <div class="flex items-center justify-between pt-space-md mt-space-sm">
+                  <div class="flex items-center gap-1.5 font-label-code-sm text-label-code-sm text-outline">
+                    <span>Rec.2020</span>
+                    <span>•</span>
+                    <span>Subsampling 4:4:4</span>
+                  </div>
+                  <span
+                    class="material-symbols-outlined text-[18px] text-on-surface-variant group-hover:text-secondary transition-colors">arrow_forward</span>
+                </div>
+              </div>
+              <!-- Tile 6: Quick Compactor -->
+              <div
+                class="group flex flex-col justify-between p-space-md rounded-xl bg-surface-container-low hover:bg-surface-container transition-all cursor-pointer shadow-md">
+                <div class="flex flex-col gap-space-sm">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-space-sm">
+                      <div
+                        class="w-9 h-9 rounded-lg bg-surface-container-highest flex items-center justify-center text-tertiary">
+                        <span class="material-symbols-outlined text-[20px]">compress</span>
+                      </div>
+                      <div class="flex flex-col">
+                        <span class="font-headline-md text-body-lg text-on-surface font-semibold">Compresión
+                          Target</span>
+                        <span class="font-label-code-sm text-label-code-sm text-tertiary font-medium">Límite Discord /
+                          Mail</span>
+                      </div>
+                    </div>
+                    <span
+                      class="font-badge-format text-badge-format px-1.5 py-0.5 rounded bg-surface-container-high text-tertiary font-bold">&lt;
+                      25 MB</span>
+                  </div>
+                  <p class="font-body-sm text-body-sm text-on-surface-variant">Ajusta automáticamente la tasa de bits
+                    para hacer encajar videos largos y PDFs pesados en límites de subida específicos.</p>
+                </div>
+                <div class="flex items-center justify-between pt-space-md mt-space-sm">
+                  <div class="flex items-center gap-1.5 font-label-code-sm text-label-code-sm text-outline">
+                    <span>2-Pass VBR</span>
+                    <span>•</span>
+                    <span>Optimización Ghost</span>
+                  </div>
+                  <span
+                    class="material-symbols-outlined text-[18px] text-on-surface-variant group-hover:text-tertiary transition-colors">arrow_forward</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Active Jobs / Live Queue Dock -->
+          <div
+            class="flex flex-col gap-space-sm bg-surface-container-low/90 rounded-xl p-space-md shadow-xl backdrop-blur-md">
+            <div class="flex items-center justify-between px-1">
+              <div class="flex items-center gap-space-sm">
+                <div class="relative flex items-center justify-center">
+                  <span class="w-2.5 h-2.5 rounded-full bg-primary-container animate-pulse"></span>
+                  <span class="absolute w-4 h-4 rounded-full bg-primary-container/30 animate-ping"></span>
+                </div>
+                <span class="font-headline-md text-headline-md text-on-surface">Cola de Conversión en Curso</span>
+                <span
+                  class="font-badge-format text-badge-format px-2 py-0.5 rounded bg-surface-container text-on-surface-variant">3
+                  Trabajos</span>
+              </div>
+              <div class="flex items-center gap-space-xs">
+                <button
+                  class="px-space-sm py-1 rounded bg-surface-container hover:bg-surface-container-high text-on-surface font-body-sm text-body-sm transition-colors flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[15px]">pause</span>
+                  <span>Pausar Todo</span>
+                </button>
+                <button
+                  class="px-space-sm py-1 rounded bg-surface-container hover:bg-surface-container-high text-error font-body-sm text-body-sm transition-colors flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[15px]">clear_all</span>
+                  <span>Limpiar Completados</span>
+                </button>
+              </div>
+            </div>
+            <!-- Queue Items Container -->
+            <div class="flex flex-col gap-space-xs pt-1">
+              <!-- Job 1: Running -->
+              <div
+                class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-sm p-space-sm rounded-lg bg-surface-container hover:bg-surface-container-high/60 transition-all shadow-sm">
+                <div class="flex items-center gap-space-sm min-w-0">
+                  <div
+                    class="w-8 h-8 rounded bg-surface-container-highest flex items-center justify-center text-primary flex-shrink-0">
+                    <span class="material-symbols-outlined text-[18px]">videocam</span>
+                  </div>
+                  <div class="flex flex-col min-w-0">
+                    <div class="flex items-center gap-space-xs">
+                      <span
+                        class="font-body-md text-body-md font-semibold text-on-surface truncate">movie_master_rip_prores.mkv</span>
+                      <span class="material-symbols-outlined text-[14px] text-outline">arrow_forward</span>
+                      <span class="font-label-code-sm text-label-code-sm text-primary">movie_master_rip.mp4</span>
+                    </div>
+                    <div
+                      class="flex items-center gap-space-xs font-label-code-sm text-label-code-sm text-on-surface-variant">
+                      <span>NVENC H.264</span>
+                      <span>•</span>
+                      <span>5.1 Surround AAC</span>
+                      <span>•</span>
+                      <span class="text-tertiary">142 fps</span>
+                      <span>•</span>
+                      <span class="text-on-surface">ETA: 01m 12s</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-space-md justify-between lg:justify-end flex-shrink-0">
+                  <!-- Progress Bar Block -->
+                  <div class="flex flex-col gap-1 w-full lg:w-56">
+                    <div class="flex justify-between font-label-code-sm text-label-code-sm">
+                      <span class="text-on-surface-variant">Procesando...</span>
+                      <span class="text-primary font-bold">74%</span>
+                    </div>
+                    <div class="w-full h-1.5 rounded-full bg-surface-container-lowest overflow-hidden">
+                      <div
+                        class="h-full bg-primary-container rounded-full shadow-[0_0_8px_rgba(255,81,106,0.6)] transition-all duration-300"
+                        style="width: 74%"></div>
+                    </div>
+                  </div>
+                  <!-- Actions -->
+                  <div class="flex items-center gap-1">
+                    <button
+                      class="w-7 h-7 rounded flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-bright transition-colors"
+                      title="Pausar">
+                      <span class="material-symbols-outlined text-[16px]">pause</span>
+                    </button>
+                    <button
+                      class="w-7 h-7 rounded flex items-center justify-center text-on-surface-variant hover:text-error hover:bg-surface-bright transition-colors"
+                      title="Cancelar">
+                      <span class="material-symbols-outlined text-[16px]">close</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <!-- Job 2: Finished -->
+              <div
+                class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-sm p-space-sm rounded-lg bg-surface-container/70 hover:bg-surface-container transition-all shadow-sm">
+                <div class="flex items-center gap-space-sm min-w-0">
+                  <div
+                    class="w-8 h-8 rounded bg-surface-container-highest flex items-center justify-center text-secondary flex-shrink-0">
+                    <span class="material-symbols-outlined text-[18px]">audiotrack</span>
+                  </div>
+                  <div class="flex flex-col min-w-0">
+                    <div class="flex items-center gap-space-xs">
+                      <span
+                        class="font-body-md text-body-md font-semibold text-on-surface truncate">podcast_episode_42_raw.mp4</span>
+                      <span class="material-symbols-outlined text-[14px] text-outline">arrow_forward</span>
+                      <span class="font-label-code-sm text-label-code-sm text-secondary">podcast_ep42_audio.aac</span>
+                    </div>
+                    <div
+                      class="flex items-center gap-space-xs font-label-code-sm text-label-code-sm text-on-surface-variant">
+                      <span class="text-tertiary flex items-center gap-0.5">
+                        <span class="material-symbols-outlined text-[13px]">check_circle</span> Completado
+                      </span>
+                      <span>•</span>
+                      <span>24.8 MB</span>
+                      <span>•</span>
+                      <span>Ratio de compresión: 88%</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-space-sm justify-between lg:justify-end flex-shrink-0">
+                  <div class="flex items-center gap-1.5">
+                    <button
+                      class="px-2 py-1 rounded bg-surface-container-high hover:bg-surface-bright text-on-surface font-body-sm text-body-sm transition-colors flex items-center gap-1">
+                      <span class="material-symbols-outlined text-[15px] text-tertiary">folder_open</span>
+                      <span class="text-xs">Mostrar</span>
+                    </button>
+                    <button
+                      class="px-2 py-1 rounded bg-surface-container-high hover:bg-surface-bright text-on-surface font-body-sm text-body-sm transition-colors flex items-center gap-1">
+                      <span class="material-symbols-outlined text-[15px] text-secondary">play_arrow</span>
+                      <span class="text-xs">Reproducir</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <!-- Job 3: Queued / Paused -->
+              <div
+                class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-sm p-space-sm rounded-lg bg-surface-container/40 hover:bg-surface-container/70 transition-all opacity-85 shadow-sm">
+                <div class="flex items-center gap-space-sm min-w-0">
+                  <div
+                    class="w-8 h-8 rounded bg-surface-container-highest flex items-center justify-center text-primary-fixed flex-shrink-0">
+                    <span class="material-symbols-outlined text-[18px]">description</span>
+                  </div>
+                  <div class="flex flex-col min-w-0">
+                    <div class="flex items-center gap-space-xs">
+                      <span
+                        class="font-body-md text-body-md font-semibold text-on-surface truncate">manual_usuario_tecnico_v3.pdf</span>
+                      <span class="material-symbols-outlined text-[14px] text-outline">arrow_forward</span>
+                      <span class="font-label-code-sm text-label-code-sm text-primary-fixed">manual_usuario.epub</span>
+                    </div>
+                    <div
+                      class="flex items-center gap-space-xs font-label-code-sm text-label-code-sm text-on-surface-variant">
+                      <span class="text-outline">En espera (Pausado por usuario)</span>
+                      <span>•</span>
+                      <span>64.1 MB</span>
+                      <span>•</span>
+                      <span>Tesseract OCR ES-EN</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-space-sm justify-between lg:justify-end flex-shrink-0">
+                  <div class="flex items-center gap-1">
+                    <button
+                      class="w-7 h-7 rounded flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-bright transition-colors"
+                      title="Reanudar">
+                      <span class="material-symbols-outlined text-[16px]">play_arrow</span>
+                    </button>
+                    <button
+                      class="w-7 h-7 rounded flex items-center justify-center text-on-surface-variant hover:text-error hover:bg-surface-bright transition-colors"
+                      title="Quitar de cola">
+                      <span class="material-symbols-outlined text-[16px]">close</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Dock Telemetry Summary Strip -->
+            <div
+              class="flex flex-col sm:flex-row items-center justify-between pt-space-xs px-1 text-on-surface-variant font-label-code-sm text-label-code-sm">
+              <div class="flex items-center gap-space-xs">
+                <span class="material-symbols-outlined text-[14px] text-tertiary">speed</span>
+                <span>Aceleración por hardware activa: <strong class="text-on-surface font-semibold">NVIDIA GeForce RTX
+                    (NVENC v8.2)</strong></span>
+              </div>
+              <div class="flex items-center gap-space-sm">
+                <span>2 de 3 tareas procesadas</span>
+                <span class="text-outline">•</span>
+                <span class="text-primary font-medium">Ancho de banda I/O: 148 MB/s</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <script>
+        function selectMode(button) {
+          const parent = button.parentElement;
+          const buttons = parent.querySelectorAll('button');
+          buttons.forEach(btn => {
+            btn.className = 'px-space-sm py-1 rounded font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-all';
+          });
+          button.className = 'px-space-sm py-1 rounded font-body-sm text-body-sm font-semibold bg-primary-container text-on-primary shadow-sm transition-all';
+        }
+
+        // Interactive drop zone visual state
+        const dropZone = document.getElementById('drop-zone');
+        if (dropZone) {
+          ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              dropZone.classList.add('ring-2', 'ring-primary-container', 'bg-surface-container');
+            }, false);
+          });
+
+          ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              dropZone.classList.remove('ring-2', 'ring-primary-container', 'bg-surface-container');
+            }, false);
+          });
+        }
+      </script>
+    </main>
+  </div>
+</body>
+
+</html>
