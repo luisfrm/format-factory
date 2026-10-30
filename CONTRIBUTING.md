@@ -55,7 +55,7 @@ pnpm build            # verifica que el ejecutable compila
    resuelta antes de mergear.
 
 No hace falta firmar un CLA: al enviar un PR aceptas que tu aporte se publique
-bajo la licencia del proyecto.
+bajo la licencia **MIT** del proyecto.
 
 ## Reglas de código
 
