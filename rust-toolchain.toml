@@ -1,0 +1,6 @@
+# Toolchain fijado para builds reproducibles.
+# Actualizar aquí y en .github/workflows/build.yml a la vez.
+[toolchain]
+channel = "1.98.1"
+components = ["rustfmt", "clippy"]
+profile = "minimal"

@@ -73,8 +73,34 @@ jobs:
           fi
 
   # ------------------------------------------------------------------
-  # 2. Build the three platforms in parallel
+  # 2. Dependency audit (informational, never blocks a release)
   # ------------------------------------------------------------------
+  audit:
+    name: Dependency audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Audit production dependencies
+        run: pnpm audit --prod --audit-level=high
+
+  # ------------------------------------------------------------------
+  # 3. Build the three platforms in parallel
+  # ------------------------------------------------------------------
+
   build:
     name: ${{ matrix.label }}
     needs: version
@@ -105,15 +131,16 @@ jobs:
           persist-credentials: false
 
       - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
-        with:
-          version: 11
+        # Sin `version:` a propósito: la versión vive en package.json → packageManager.
 
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
-          node-version: 24
+          node-version-file: .node-version
           cache: pnpm
 
       - uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
+        with:
+          toolchain: 1.98.1
 
       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
         with:
@@ -163,7 +190,7 @@ jobs:
           if-no-files-found: error
 
   # ------------------------------------------------------------------
-  # 3. Publish a single GitHub Release with every platform
+  # 4. Publish a single GitHub Release with every platform
   # ------------------------------------------------------------------
   publish:
     name: Publish release

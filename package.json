@@ -2,6 +2,11 @@
   "name": "format-factory",
   "private": true,
   "version": "0.1.0",
+  "packageManager": "pnpm@11.5.3",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=11.0.0"
+  },
   "type": "module",
   "description": "Desktop file converter built with Tauri + React",
   "scripts": {
@@ -13,10 +18,11 @@
     "build:installer": "node scripts/sync-version.mjs && node scripts/fetch-binaries.mjs && tauri build",
     "release": "node scripts/release.mjs",
     "typecheck": "tsc --noEmit",
+    "lint:yaml": "node scripts/lint-yaml.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:rust": "cargo test --manifest-path src-tauri/Cargo.toml",
-    "check": "pnpm typecheck && pnpm test && pnpm test:rust",
+    "check": "pnpm typecheck && pnpm lint:yaml && pnpm test && pnpm test:rust",
     "tauri": "tauri",
     "setup:binaries": "node scripts/fetch-binaries.mjs"
   },
@@ -57,6 +63,7 @@
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2",
     "vite": "^8.3.5",
-    "vitest": "^5.0.5"
+    "vitest": "^5.0.5",
+    "yaml": "^2.9.1"
   }
 }
