@@ -28,14 +28,18 @@ instrucciones exactas están en [`docs/INSTALL.md`](./docs/INSTALL.md).
 
 ## Requisitos
 
-| Herramienta | Versión | Estado |
+| Herramienta | Versión | Dónde se fija |
 |---|---|---|
-| Node.js | ≥ 20 | ✅ 24.15 |
-| pnpm | ≥ 9 | ✅ 11.5 |
-| Rust + cargo | ≥ 1.90 | ✅ 1.98 |
-| FFmpeg / FFprobe | 6+ | ✅ sidecars en `src-tauri/binaries/` |
+| Node.js | 24.15.0 | `.node-version` |
+| pnpm | 11.5.3 | `packageManager` en `package.json` |
+| Rust + cargo | 1.98.1 | `rust-toolchain.toml` |
+| FFmpeg / FFprobe | 6.1.1 | sidecars en `src-tauri/binaries/` |
 
-Los binarios **no están versionados** (pesan ~145 MB). `pnpm setup:binaries` los
+Ninguna versión flota: CI lee estos mismos archivos, así que el build local y el
+de GitHub compilan con lo mismo. Para actualizar una, se cambia en su archivo y
+se hace commit; no hay copias duplicadas en el workflow.
+
+Los binarios de FFmpeg **no están versionados** (pesan ~145 MB). `pnpm setup:binaries` los
 copia desde las dependencias de desarrollo (`ffmpeg-static` / `ffprobe-static`)
 con el nombre y el target triple que Tauri espera. Si algo falla, imprime las
 instrucciones manuales para tu sistema.
