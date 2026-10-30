@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 /* ------------------------------------------------------------------ */
-/* Design tokens — from DESIGN.md ("Transmute" pro-tool system)        */
-/* Canvas #0F1117 · crimson #F43F5E · cyan telemetry · 4px base radius */
+/* Design tokens                                                       */
+/* Canvas #0F1117 · crimson #F43F5E · cyan telemetry · 4px base radius  */
 /* ------------------------------------------------------------------ */
 @theme {
   /* Surfaces */
@@ -18,6 +18,7 @@
   /* Semantic */
   --color-accent: #f43f5e;
   --color-accent-hover: #e11d48;
+  --color-accent-bright: #ff516a;
   --color-accent-soft: rgba(244, 63, 94, 0.12);
   --color-info: #38bdf8;
   --color-success: #10b981;
@@ -41,9 +42,22 @@
   --font-mono:
     "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, "Cascadia Code",
     monospace;
+
+  /* Motion */
+  --ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
 }
 
 @layer base {
+  :root {
+    --dur-instant: 100ms;
+    --dur-fast: 150ms;
+    --dur-base: 200ms;
+    --dur-slow: 320ms;
+    color-scheme: dark;
+  }
+
   html,
   body,
   #root {
@@ -57,7 +71,7 @@
     line-height: 1.45;
   }
 
-  /* Tabular numbers everywhere so ETA / bitrate / percentages don't jump. */
+  /* Tabular numbers so ETA / bitrate / percentages never jump. */
   .font-mono,
   [data-numeric] {
     font-variant-numeric: tabular-nums;
@@ -89,6 +103,28 @@
   }
 }
 
+@layer components {
+  /* Frosted layer used by floating HUDs, the queue dock and dialogs. */
+  .glass {
+    background-color: color-mix(
+      in srgb,
+      var(--color-surface) 88%,
+      transparent
+    );
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--color-border);
+  }
+
+  /* Subtle dotted canvas seen behind the drop zone in the mock. */
+  .tech-grid {
+    background-image: radial-gradient(
+      rgba(255, 255, 255, 0.055) 1px,
+      transparent 1px
+    );
+    background-size: 18px 18px;
+  }
+}
+
 @layer utilities {
   .drag-region {
     -webkit-app-region: drag;
@@ -107,3 +143,67 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ------------------------------------------------------------------ */
+/* Keyframes shared by Radix overlays and progress indicators          */
+/* ------------------------------------------------------------------ */
+@keyframes ff-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes ff-overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes ff-overlay-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes ff-dialog-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes ff-dialog-out {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.97);
+  }
+}
+
+@keyframes ff-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+

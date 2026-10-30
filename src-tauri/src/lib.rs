@@ -1,4 +1,9 @@
 mod engines;
+mod media;
+mod plan;
+mod queue;
+
+use tauri::Manager;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -8,8 +13,19 @@ pub fn run() {
                 .level(log::LevelFilter::Info)
                 .build(),
         )
-        .invoke_handler(tauri::generate_handler![engines::engine_status])
-        .setup(|_app| Ok(()))
+        .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_opener::init())
+        .setup(|app| {
+            let manager = queue::JobManager::new(app.handle().clone());
+            app.manage(manager);
+            Ok(())
+        })
+        .invoke_handler(tauri::generate_handler![
+            engines::engine_status,
+            media::probe_files,
+            queue::enqueue_job,
+            queue::cancel_job,
+        ])
         .run(tauri::generate_context!())
         .expect("error while building tauri application");
 }

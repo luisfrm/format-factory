@@ -28,3 +28,6 @@ pnpm-debug.log*
 
 # Tooling artifacts
 .playwright-mcp/
+.agents/
+.trae/
+__pycache__/
