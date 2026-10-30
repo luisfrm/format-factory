@@ -39,7 +39,7 @@ jobs:
       version: ${{ steps.read.outputs.version }}
       publish: ${{ steps.read.outputs.publish }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
 
@@ -100,15 +100,15 @@ jobs:
             artifact: macos-arm64
             suffix: macos-arm64
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
         with:
           version: 11
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: pnpm
@@ -155,7 +155,7 @@ jobs:
         run: node scripts/collect-artifacts.mjs --from src-tauri/target/release/bundle --out stage --prefix "Format-Factory_${{ needs.version.outputs.version }}_${{ matrix.suffix }}"
 
       - name: Upload platform files
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: release-files-${{ matrix.artifact }}
           path: stage/*
@@ -174,12 +174,12 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
 
       - name: Download build artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: release-files-*
           merge-multiple: true
