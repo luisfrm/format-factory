@@ -4,6 +4,25 @@ Conversor de archivos de escritorio: video, audio y lotes mixtos. FFmpeg hace el
 
 **Tauri 2** (shell nativo Rust) · **React 19 + TypeScript** · **Tailwind v4** · **FFmpeg 6.1**
 
+[![Release](https://github.com/luisfrm/format-factory/actions/workflows/build.yml/badge.svg)](https://github.com/luisfrm/format-factory/actions/workflows/build.yml)
+[![Última versión](https://img.shields.io/github/v/release/luisfrm/format-factory?label=descargar)](https://github.com/luisfrm/format-factory/releases/latest)
+[![Issues](https://img.shields.io/github/issues/luisfrm/format-factory)](https://github.com/luisfrm/format-factory/issues)
+
+## Descargar
+
+Los instaladores se publican automáticamente en
+[**Releases**](https://github.com/luisfrm/format-factory/releases/latest):
+
+| Sistema | Archivo |
+|---|---|
+| Windows x64 | `Format-Factory_<v>_windows-x64-setup.exe` · `.msi` |
+| macOS arm64 | `Format-Factory_<v>_macos-arm64.dmg` |
+| Linux x64 | `Format-Factory_<v>_linux-x64.AppImage` · `.deb` |
+
+Cada release incluye `SHA256SUMS.txt` e `INSTALL.md`. Los binarios **no están
+firmados**: Windows muestra SmartScreen y macOS pide clic derecho → Abrir. Las
+instrucciones exactas están en [`docs/INSTALL.md`](./docs/INSTALL.md).
+
 ---
 
 ## Requisitos
@@ -58,6 +77,37 @@ exactamente eso en paralelo y sube los artefactos como descarga.
 > En `pnpm dev:web` el navegador no puede leer rutas reales ni lanzar procesos, así que
 > `src/lib/backend.ts` sustituye el motor por una cola simulada. Toda la UI,
 > transiciones y estados son los mismos; solo cambia quién convierte.
+
+---
+
+## Publicar una versión
+
+```bash
+pnpm release patch     # 0.1.0 → 0.1.1
+pnpm release minor     # 0.1.1 → 0.2.0
+pnpm release major     # 0.2.0 → 1.0.0
+```
+
+Actualiza `package.json` (única fuente de verdad, `tauri.conf.json` apunta a él),
+sincroniza `Cargo.toml`, hace commit `chore(release): vX` y pushea a `master`.
+
+El workflow [`.github/workflows/build.yml`](./.github/workflows/build.yml):
+
+1. lee la versión y comprueba si `vX` ya existe;
+2. compila Windows, Linux y macOS en paralelo y corre los tests en cada uno;
+3. si la versión es nueva, crea el release con nombres normalizados,
+   `SHA256SUMS.txt` e `INSTALL.md`.
+
+Si la versión no cambió, CI compila igual para verificar pero **no toca** el
+release publicado. Para republicar a mano: Actions → *Release* → marcar `force`.
+
+---
+
+## Seguridad y contribución
+
+- ¿Encontraste una vulnerabilidad? [SECURITY.md](./SECURITY.md) — canal privado, nunca un issue.
+- ¿Quieres aportar código? [CONTRIBUTING.md](./CONTRIBUTING.md). Todo PR requiere revisión del mantenedor ([CODEOWNERS](./.github/CODEOWNERS)).
+- Normas de convivencia: [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md).
 
 ---
 

@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Reportar una vulnerabilidad
+    url: https://github.com/luisfrm/format-factory/security/advisories/new
+    about: Usa el canal privado, nunca un issue público.
+  - name: Descargar la última versión
+    url: https://github.com/luisfrm/format-factory/releases/latest
+    about: Instaladores para Windows, macOS y Linux.

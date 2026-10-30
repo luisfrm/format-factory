@@ -1,0 +1,49 @@
+name: Feature request
+description: Propón una funcionalidad o mejora
+title: "feat: "
+labels: ["enhancement", "needs triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Antes de proponer, revisa los issues abiertos y el `README.md`.
+        Las ideas grandes conviene discutirlas antes de escribir código.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: ¿Qué problema resuelve?
+      description: Describe la situación actual y por qué es incómoda.
+      placeholder: Cada vez que convierto una serie tengo que soltar los archivos uno por uno.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Propuesta
+      description: Cómo te gustaría que funcionara.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternativas consideradas
+    validations:
+      required: false
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Área
+      options:
+        - Conversión / formatos
+        - Cola e historial
+        - Interfaz
+        - Rendimiento
+        - Accesibilidad
+        - Distribución / instaladores
+        - Otro
+    validations:
+      required: true
