@@ -1,0 +1,46 @@
+name: Greetings
+
+# Da la bienvenida a quien abre su primer issue o PR.
+#
+# Usa `pull_request_target` a propósito: en `pull_request` el token es de solo
+# lectura y no podría comentar. Es seguro aquí porque el workflow NO hace
+# checkout del código del PR ni ejecuta nada suyo: solo publica un comentario.
+on:
+  issues:
+    types: [opened]
+  pull_request_target:
+    types: [opened]
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  greeting:
+    name: Welcome first-time contributor
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/first-interaction@1c4688942c71f71d4f5502a26ea67c331730fa4d # v3.1.0
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          issue-message: |
+            ¡Gracias por abrir tu primer issue! 🙌
+
+            Para poder ayudarte rápido, revisa que incluya:
+            - versión de Format Factory (está en Ajustes)
+            - tu sistema operativo
+            - los pasos para reproducirlo
+
+            Si es un problema de seguridad, ciérralo y usa el
+            [reporte privado](https://github.com/luisfrm/format-factory/security/advisories/new).
+          pr-message: |
+            ¡Gracias por tu primer pull request! 🎉
+
+            Antes de que lo revise:
+            - `pnpm check` debe pasar
+            - sigue [CONTRIBUTING.md](https://github.com/luisfrm/format-factory/blob/master/CONTRIBUTING.md)
+            - los commits van en formato Conventional Commits
+
+            CI compila Windows, Linux y macOS: tarda unos minutos. Yo lo reviso
+            en cuanto esté en verde.
