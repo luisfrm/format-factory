@@ -44,6 +44,35 @@ const SUFFIXES = [
   { match: /\.deb$/i, suffix: ".deb" },
 ];
 
+/**
+ * Self-update packages. Tauri 2 signs the installer itself instead of emitting
+ * a separate archive, so the updater downloads the same file the user would.
+ *
+ * macOS is intentionally absent: without code signing Gatekeeper can refuse the
+ * replaced bundle, so those users download manually.
+ */
+const UPDATER_TARGETS = [
+  {
+    platform: "windows-x86_64",
+    match: /-setup\.exe$/i,
+    suffix: "-setup.exe",
+  },
+  {
+    platform: "linux-x86_64",
+    // Tauri emits either the AppImage or an AppImage.tar.gz depending on version.
+    match: /\.appimage(\.tar\.gz)?$/i,
+    suffix: null,
+  },
+];
+
+/** Extension to keep for a platform, deriving it from the source file. */
+function updaterSuffix(source, target) {
+  if (target.suffix) return target.suffix;
+
+  const index = source.toLowerCase().indexOf(".appimage");
+  return index === -1 ? "" : source.slice(index);
+}
+
 function checksums(directory) {
   const files = walk(directory)
     .filter((file) => path.basename(file) !== "SHA256SUMS.txt")
@@ -71,7 +100,7 @@ function checksums(directory) {
 function collect(from, out, prefix) {
   if (!from || !out || !prefix) {
     console.error(
-      "✖ Uso: --from <bundle> --out <dir> --prefix <nombre> | --checksums <dir>",
+      "✖ Uso: --from <bundle> --out <dir> --prefix <nombre> [--updater] | --checksums <dir> | --latest-json <dir>",
     );
     process.exit(1);
   }
@@ -100,6 +129,31 @@ function collect(from, out, prefix) {
     written.push(`${path.basename(destination)} (${(statSync(destination).size / 1024 / 1024).toFixed(1)} MB)`);
   }
 
+  // Self-update packages plus their minisign signature.
+  if (process.argv.includes("--updater")) {
+    for (const target of UPDATER_TARGETS) {
+      const source = files.find((file) => target.match.test(file));
+      if (!source) continue;
+
+      const suffix = updaterSuffix(source, target);
+      const destination = path.join(out, `${prefix}${suffix}`);
+
+      // Windows reuses the installer we already copied.
+      if (!statSync(destination, { throwIfNoEntry: false })) {
+        copyFileSync(source, destination);
+        written.push(`${path.basename(destination)} (updater)`);
+      }
+
+      const signature = `${source}.sig`;
+      if (statSync(signature, { throwIfNoEntry: false })) {
+        copyFileSync(signature, `${destination}.sig`);
+      } else {
+        console.error(`✖ Falta la firma de ${path.basename(source)}`);
+        process.exit(1);
+      }
+    }
+  }
+
   if (written.length === 0) {
     console.error(`✖ No se reconoció ningún instalador en ${from}`);
     process.exit(1);
@@ -107,6 +161,64 @@ function collect(from, out, prefix) {
 
   console.log(`✔ ${written.length} archivos listos en ${out}`);
   for (const entry of written) console.log(`  ${entry}`);
+}
+
+/**
+ * Builds the `latest.json` the updater plugin polls. Every platform entry needs
+ * the minisign signature of its package, which Tauri writes next to it.
+ */
+function latestJson(directory, version, baseUrl) {
+  if (!directory || !version || !baseUrl) {
+    console.error(
+      "✖ Uso: --latest-json <dir> --version <x.y.z> --base-url <url del release>",
+    );
+    process.exit(1);
+  }
+
+  const files = readdirSync(directory);
+  const platforms = {};
+
+  for (const target of UPDATER_TARGETS) {
+    const artifact = files.find((file) => target.match.test(file));
+    if (!artifact) continue;
+
+    const signatureFile = `${artifact}.sig`;
+    if (!files.includes(signatureFile)) {
+      console.error(`✖ ${artifact} no tiene firma (${signatureFile})`);
+      process.exit(1);
+    }
+
+    platforms[target.platform] = {
+      signature: readFileSync(path.join(directory, signatureFile), "utf8").trim(),
+      url: `${baseUrl.replace(/\/$/, "")}/${artifact}`,
+    };
+  }
+
+  if (Object.keys(platforms).length === 0) {
+    console.error("✖ No hay paquetes de actualización para publicar");
+    process.exit(1);
+  }
+
+  const manifest = {
+    version,
+    notes: "",
+    pub_date: new Date().toISOString(),
+    platforms,
+  };
+
+  writeFileSync(
+    path.join(directory, "latest.json"),
+    `${JSON.stringify(manifest, null, 2)}\n`,
+  );
+
+  console.log(`✔ latest.json (${Object.keys(platforms).join(", ")})`);
+}
+
+const latestJsonDir = arg("--latest-json");
+
+if (latestJsonDir) {
+  latestJson(latestJsonDir, arg("--version"), arg("--base-url"));
+  process.exit(0);
 }
 
 const checksumTarget = arg("--checksums");

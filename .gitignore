@@ -6,6 +6,11 @@ dist/
 dist-ssr/
 *.local
 
+# Local secrets (signing keys live outside the repo)
+.env
+.env.*
+!.env.example
+
 # Rust / Tauri
 src-tauri/target/
 src-tauri/gen/schemas/
