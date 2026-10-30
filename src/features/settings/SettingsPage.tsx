@@ -4,35 +4,10 @@ import { Button } from "@/components/ui/button";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { StatusDot } from "@/components/ui/status-dot";
 import { useEngineStatus } from "@/features/engines/use-engine-status";
+import { Section } from "@/features/settings/Section";
+import { UpdatesSection } from "@/features/settings/UpdatesSection";
 import { QUALITY_PRESETS, type QualityPreset } from "@/lib/formats";
 import { useConverterStore } from "@/store/converter-store";
-
-function Section({
-  icon: Icon,
-  title,
-  description,
-  children,
-}: {
-  icon: typeof Cpu;
-  title: string;
-  description: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="rounded-panel border border-border bg-surface/40 p-4">
-      <header className="flex items-start gap-2.5">
-        <span className="grid size-8 shrink-0 place-items-center rounded-control border border-border bg-surface-2 text-muted">
-          <Icon size={15} strokeWidth={1.8} />
-        </span>
-        <div className="flex flex-col gap-0.5">
-          <h2 className="text-[12px] font-semibold text-text">{title}</h2>
-          <p className="text-[11px] leading-relaxed text-muted">{description}</p>
-        </div>
-      </header>
-      <div className="mt-3 border-t border-border pt-3">{children}</div>
-    </section>
-  );
-}
 
 export function SettingsPage() {
   const { engines, loading, native } = useEngineStatus();
@@ -143,12 +118,13 @@ export function SettingsPage() {
         </div>
       </Section>
 
+      <UpdatesSection />
+
       <Section
         icon={Info}
         title="Acerca de"
-        description="Format Factory 0.1.0 · Tauri 2 · React 19 · FFmpeg."
-      >
-        <p className="font-mono text-[10px] leading-relaxed text-subtle">
+        description="Tauri 2 · React 19 · FFmpeg."
+      >        <p className="font-mono text-[10px] leading-relaxed text-subtle">
           Las conversiones se ejecutan en local: ningún archivo sale de este equipo.
           {!native && " Ahora mismo estás en la vista previa del navegador, donde las conversiones son simuladas."}
         </p>

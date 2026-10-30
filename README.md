@@ -106,6 +106,31 @@ El workflow [`.github/workflows/build.yml`](./.github/workflows/build.yml):
 Si la versión no cambió, CI compila igual para verificar pero **no toca** el
 release publicado. Para republicar a mano: Actions → *Release* → marcar `force`.
 
+### Actualizaciones automáticas
+
+La app instalada consulta `latest.json` una vez al día y muestra un banner
+discreto. Si el usuario lo ignora, no vuelve a aparecer hasta dentro de una
+semana; si lo omite, no se le vuelve a ofrecer esa versión (Ajustes sí la sigue
+mostrando).
+
+| Plataforma | Auto-update | Motivo |
+|---|---|---|
+| Windows (`setup.exe`) | ✅ | Instalación por usuario, sin permisos de admin |
+| Linux (AppImage) | ✅ | Reemplaza el archivo en su sitio |
+| Linux (`.deb`) | ❌ | Lo gestiona el gestor de paquetes |
+| macOS (`.dmg`) | ❌ | Sin firma de Apple, Gatekeeper puede bloquear la versión nueva |
+| Windows (`.msi`) | ❌ | Instalación por máquina, el updater duplicaría la app |
+
+Los paquetes van firmados con **minisign**. La app solo acepta una actualización
+si la firma coincide con la clave pública embebida en `tauri.conf.json`.
+
+- Clave privada: secreto `TAURI_SIGNING_PRIVATE_KEY` en GitHub.
+- Clave pública: campo `plugins.updater.pubkey`.
+- Para compilar instaladores en local hace falta un `.env` (ver `.env.example`).
+
+> Si se pierde la clave privada, no se pueden publicar más actualizaciones: hay
+> que guardarla en un gestor de contraseñas **y** en una copia offline.
+
 ---
 
 ## Seguridad y contribución
