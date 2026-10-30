@@ -216,6 +216,7 @@ export function BatchRow({ file }: BatchRowProps) {
           <TargetPicker
             value={file.target}
             source={file.kind}
+            outputKind={file.outputKind}
             disabled={active}
             onChange={(target) => setTarget(file.id, target)}
             label={`Formato de salida para ${file.name}`}

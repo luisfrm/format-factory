@@ -2,7 +2,13 @@ import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { open as openDialog } from "@tauri-apps/plugin-dialog";
 import { openPath, revealItemInDir } from "@tauri-apps/plugin-opener";
-import { ACCEPTED_EXTENSIONS, extname, fileName, kindFromPath } from "@/lib/files";
+import {
+  acceptFor,
+  extensionsFor,
+  extname,
+  fileName,
+  kindFromPath,
+} from "@/lib/files";
 import type { MediaKind, QualityPreset, TargetFormat } from "@/lib/formats";
 import type { JobUpdate } from "@/lib/jobs";
 
@@ -44,7 +50,8 @@ export type JobSpec = {
 export interface Backend {
   readonly kind: "native" | "demo";
   engines(): Promise<EngineStatus[]>;
-  pickMediaFiles(): Promise<string[]>;
+  /** `kind` narrows the OS dialog to that source family (preset intakes). */
+  pickMediaFiles(kind?: MediaKind | null): Promise<string[]>;
   pickDirectory(): Promise<string | null>;
   probe(paths: string[]): Promise<ProbeResult[]>;
   startJob(spec: JobSpec): Promise<void>;
@@ -54,10 +61,12 @@ export interface Backend {
   onJobUpdate(callback: (update: JobUpdate) => void): () => void;
 }
 
-const MEDIA_FILTER = {
-  name: "Video y audio",
-  extensions: [...ACCEPTED_EXTENSIONS],
-};
+function mediaFilter(kind?: MediaKind | null) {
+  const name =
+    kind === "video" ? "Video" : kind === "audio" ? "Audio" : "Video y audio";
+
+  return { name, extensions: [...extensionsFor(kind)] };
+}
 
 function normalizeProbe(path: string, raw: Partial<ProbeResult>): ProbeResult {
   const kind = raw.kind ?? kindFromPath(path) ?? "video";
@@ -84,11 +93,11 @@ const nativeBackend: Backend = {
 
   engines: () => invoke<EngineStatus[]>("engine_status"),
 
-  async pickMediaFiles() {
+  async pickMediaFiles(kind) {
     const selection = await openDialog({
       multiple: true,
       directory: false,
-      filters: [MEDIA_FILTER],
+      filters: [mediaFilter(kind)],
     });
     if (!selection) return [];
     return Array.isArray(selection) ? selection : [selection];
@@ -192,12 +201,12 @@ function createDemoBackend(): Backend {
     });
   }
 
-  async function pickViaInput(): Promise<string[]> {
+  async function pickViaInput(kind?: MediaKind | null): Promise<string[]> {
     return new Promise((resolve) => {
       const input = document.createElement("input");
       input.type = "file";
       input.multiple = true;
-      input.accept = ACCEPTED_EXTENSIONS.map((ext) => `.${ext}`).join(",");
+      input.accept = acceptFor(kind);
       input.style.display = "none";
       document.body.appendChild(input);
 

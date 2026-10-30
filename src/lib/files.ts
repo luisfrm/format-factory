@@ -37,8 +37,26 @@ export const ACCEPTED_EXTENSIONS = [
   ...SUPPORTED_AUDIO_EXTENSIONS,
 ];
 
+/**
+ * Extensions accepted by an intake. `null`/`undefined` accepts everything
+ * supported; a preset narrows it to its source kind.
+ */
+export function extensionsFor(
+  kind?: MediaKind | null,
+): readonly string[] {
+  if (kind === "video") return SUPPORTED_VIDEO_EXTENSIONS;
+  if (kind === "audio") return SUPPORTED_AUDIO_EXTENSIONS;
+  return ACCEPTED_EXTENSIONS;
+}
+
 /** `accept` attribute for <input type="file">. */
-export const FILE_ACCEPT = ACCEPTED_EXTENSIONS.map((ext) => `.${ext}`).join(",");
+export function acceptFor(kind?: MediaKind | null): string {
+  return extensionsFor(kind)
+    .map((ext) => `.${ext}`)
+    .join(",");
+}
+
+export const FILE_ACCEPT = acceptFor();
 
 /**
  * Splits a path into directory + file name. Works with both separators and
@@ -48,7 +66,7 @@ export function splitPath(path: string): {
   directory: string;
   fileName: string;
 } {
-  const normalized = path.replace(/\\/g, "/");
+  const normalized = path.replaceAll('\\', "/");
   const index = normalized.lastIndexOf("/");
 
   if (index === -1) return { directory: "", fileName: normalized };
@@ -89,8 +107,14 @@ export function kindFromPath(path: string): MediaKind | null {
   return kindFromExtension(extname(path));
 }
 
-export function isSupportedFile(path: string): boolean {
-  return kindFromPath(path) !== null;
+/** When `kind` is given, files of the other family are rejected. */
+export function isSupportedFile(
+  path: string,
+  kind?: MediaKind | null,
+): boolean {
+  const detected = kindFromPath(path);
+  if (!detected) return false;
+  return kind ? detected === kind : true;
 }
 
 /** "mkv" → "MKV", unknown → "?" */

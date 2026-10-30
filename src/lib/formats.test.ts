@@ -79,6 +79,39 @@ describe("canTarget", () => {
   });
 });
 
+describe("preset output lock", () => {
+  it("narrows a video intake to audio containers", () => {
+    expect(availableTargets("video", "audio")).toEqual([
+      "mp3",
+      "aac",
+      "m4a",
+      "wav",
+      "flac",
+    ]);
+  });
+
+  it("keeps both families when there is no lock", () => {
+    expect(availableTargets("video", null)).toHaveLength(9);
+  });
+
+  it("blocks the other family even for a video source", () => {
+    expect(canTarget("video", "mp4", "audio")).toBe(false);
+    expect(canTarget("video", "mp3", "audio")).toBe(true);
+  });
+
+  it("never locks a preset out of its own target", () => {
+    for (const preset of CONVERSION_PRESETS) {
+      const outputKind = FORMATS[preset.target].kind;
+      const allowed = availableTargets(preset.source, outputKind);
+
+      expect(allowed).toContain(preset.target);
+      for (const target of allowed) {
+        expect(canTarget(preset.source, target, outputKind)).toBe(true);
+      }
+    }
+  });
+});
+
 describe("defaults", () => {
   it("defaults video to mp4 and audio to mp3", () => {
     expect(defaultTargetFor("video")).toBe("mp4");

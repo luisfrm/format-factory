@@ -11,6 +11,8 @@ import {
 type TargetPickerProps = {
   value: TargetFormat;
   source: MediaKind;
+  /** Preset lock: only offer this output family. */
+  outputKind?: MediaKind | null;
   onChange: (target: TargetFormat) => void;
   size?: "sm" | "md";
   align?: "start" | "end";
@@ -27,13 +29,17 @@ const MENU_ITEM = [
 export function TargetPicker({
   value,
   source,
+  outputKind,
   onChange,
   size = "sm",
   align = "end",
   disabled,
   label = "Formato de salida",
 }: TargetPickerProps) {
-  const targets = availableTargets(source);
+  const locked = availableTargets(source, outputKind);
+  // A probe can turn a "video" file into audio-only: fall back to every target
+  // the source supports instead of showing an empty menu.
+  const targets = locked.length > 0 ? locked : availableTargets(source);
   const videoTargets = targets.filter((target) => FORMATS[target].kind === "video");
   const audioTargets = targets.filter((target) => FORMATS[target].kind === "audio");
 
