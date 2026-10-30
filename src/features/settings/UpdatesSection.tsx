@@ -1,4 +1,5 @@
-import { RefreshCw } from "lucide-react";
+import { Check, RefreshCw } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Section } from "@/features/settings/Section";
 import { Badge } from "@/components/ui/badge";
@@ -26,6 +27,23 @@ export function UpdatesSection() {
   const openDialog = useUpdateStore((state) => state.openDialog);
 
   const checking = status === "checking";
+  const upToDate = !available && lastCheckedAt !== null && status !== "error";
+
+  async function handleCheck() {
+    const result = await check();
+
+    if (result === "up-to-date") {
+      toast.success("Estás al día", {
+        description: `v${currentVersion ?? "—"} es la última versión disponible.`,
+      });
+    }
+
+    if (result === "error") {
+      toast.error("No se pudo comprobar", {
+        description: useUpdateStore.getState().error ?? undefined,
+      });
+    }
+  }
 
   return (
     <Section
@@ -51,6 +69,13 @@ export function UpdatesSection() {
             <Badge tone="accent">v{available.version} disponible</Badge>
           )}
 
+          {upToDate && (
+            <Badge tone="success">
+              <Check size={10} strokeWidth={3} />
+              Al día
+            </Badge>
+          )}
+
           {status === "error" && error && (
             <span className="max-w-[220px] truncate font-mono text-[10px] text-danger">
               {error}
@@ -65,7 +90,7 @@ export function UpdatesSection() {
             <Button
               size="sm"
               variant="secondary"
-              onClick={() => void check({ manual: true })}
+              onClick={() => void handleCheck()}
               disabled={checking}
             >
               <RefreshCw size={13} className={checking ? "animate-spin" : undefined} />

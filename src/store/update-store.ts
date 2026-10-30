@@ -15,6 +15,9 @@ export type UpdateStatus =
   | "ready"
   | "error";
 
+/** What a check produced, so the caller can react (e.g. show a toast). */
+export type CheckResult = "available" | "up-to-date" | "error" | "skipped";
+
 type UpdateState = {
   currentVersion: string | null;
   platform: string | null;
@@ -34,7 +37,7 @@ type UpdateState = {
   dialogOpen: boolean;
 
   init: () => Promise<void>;
-  check: (options?: { manual?: boolean }) => Promise<void>;
+  check: () => Promise<CheckResult>;
   install: () => Promise<void>;
   snooze: () => void;
   skip: () => void;
@@ -88,8 +91,10 @@ export const useUpdateStore = create<UpdateState>()(
         }
       },
 
-      async check(options) {
-        if (get().status === "checking" || get().status === "downloading") return;
+      async check() {
+        if (get().status === "checking" || get().status === "downloading") {
+          return "skipped";
+        }
 
         set({ status: "checking", error: null });
 
@@ -102,9 +107,7 @@ export const useUpdateStore = create<UpdateState>()(
             lastCheckedAt: Date.now(),
           });
 
-          if (options?.manual && !available) {
-            set({ status: "idle" });
-          }
+          return available ? "available" : "up-to-date";
         } catch (error) {
           set({
             status: "error",
@@ -114,6 +117,8 @@ export const useUpdateStore = create<UpdateState>()(
                 ? error.message
                 : "No se pudo comprobar si hay actualizaciones",
           });
+
+          return "error";
         }
       },
 
