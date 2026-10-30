@@ -23,8 +23,9 @@ jobs:
     steps:
       - uses: actions/first-interaction@1c4688942c71f71d4f5502a26ea67c331730fa4d # v3.1.0
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          issue-message: |
+          # Los nombres van con guion bajo: así los declara la action.
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          issue_message: |
             ¡Gracias por abrir tu primer issue! 🙌
 
             Para poder ayudarte rápido, revisa que incluya:
@@ -34,7 +35,7 @@ jobs:
 
             Si es un problema de seguridad, ciérralo y usa el
             [reporte privado](https://github.com/luisfrm/format-factory/security/advisories/new).
-          pr-message: |
+          pr_message: |
             ¡Gracias por tu primer pull request! 🎉
 
             Antes de que lo revise:
