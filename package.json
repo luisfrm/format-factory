@@ -1,7 +1,7 @@
 {
   "name": "format-factory",
   "private": true,
-  "version": "0.1.2",
+  "version": "0.1.3",
   "packageManager": "pnpm@11.5.3",
   "engines": {
     "node": ">=20.0.0",
