@@ -1,23 +1,29 @@
 use serde::Serialize;
+use std::path::{Path, PathBuf};
 use std::process::Command;
+
+#[cfg(windows)]
+const EXE_EXT: &str = ".exe";
+#[cfg(not(windows))]
+const EXE_EXT: &str = "";
+
+/// Target triple injected by build.rs, e.g. `x86_64-pc-windows-msvc`.
+const TARGET: &str = env!("FF_TARGET");
 
 /// A conversion engine the app can shell out to.
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct EngineStatus {
-    /// Stable id used by the frontend: "ffmpeg" | "ffprobe" | "calibre".
     pub id: &'static str,
     pub label: &'static str,
     pub available: bool,
-    /// First line of `-version` output, e.g. "ffmpeg version 7.1".
     pub version: Option<String>,
 }
 
-fn run_version(bin: &str, version_flag: &str) -> Option<String> {
-    let mut cmd = Command::new(bin);
-    cmd.arg(version_flag);
+/// Builds a command that never flashes a console window on Windows.
+pub fn command(path: &Path) -> Command {
+    let mut cmd = Command::new(path);
 
-    // Avoid spawning a console window for each probe on Windows.
     #[cfg(windows)]
     {
         use std::os::windows::process::CommandExt;
@@ -25,7 +31,57 @@ fn run_version(bin: &str, version_flag: &str) -> Option<String> {
         cmd.creation_flags(CREATE_NO_WINDOW);
     }
 
-    let output = cmd.output().ok()?;
+    cmd
+}
+
+/// Resolution order:
+/// 1. `FMT_<NAME>` environment variable (escape hatch for development)
+/// 2. next to the executable (bundled sidecar)
+/// 3. `src-tauri/binaries/<name>-<target>.exe` (development)
+/// 4. `<name>` from PATH
+pub fn locate(name: &str) -> PathBuf {
+    let env_key = format!("FMT_{}", name.to_uppercase());
+    if let Ok(value) = std::env::var(&env_key) {
+        let trimmed = value.trim();
+        if !trimmed.is_empty() {
+            return PathBuf::from(trimmed);
+        }
+    }
+
+    if let Ok(exe) = std::env::current_exe() {
+        if let Some(dir) = exe.parent() {
+            let bundled = dir.join(format!("{name}{EXE_EXT}"));
+            if bundled.is_file() {
+                return bundled;
+            }
+        }
+    }
+
+    if let Some(manifest) = option_env!("CARGO_MANIFEST_DIR") {
+        let binaries = PathBuf::from(manifest).join("binaries");
+        for candidate in [
+            binaries.join(format!("{name}-{TARGET}{EXE_EXT}")),
+            binaries.join(format!("{name}{EXE_EXT}")),
+        ] {
+            if candidate.is_file() {
+                return candidate;
+            }
+        }
+    }
+
+    PathBuf::from(format!("{name}{EXE_EXT}"))
+}
+
+pub fn ffmpeg() -> PathBuf {
+    locate("ffmpeg")
+}
+
+pub fn ffprobe() -> PathBuf {
+    locate("ffprobe")
+}
+
+fn first_line_of_version(path: &Path, flag: &str) -> Option<String> {
+    let output = command(path).arg(flag).output().ok()?;
     if !output.status.success() {
         return None;
     }
@@ -38,8 +94,8 @@ fn run_version(bin: &str, version_flag: &str) -> Option<String> {
         .filter(|line| !line.is_empty())
 }
 
-fn probe(id: &'static str, label: &'static str, bin: &str, flag: &str) -> EngineStatus {
-    let version = run_version(bin, flag);
+fn probe(id: &'static str, label: &'static str, binary: &str, flag: &str) -> EngineStatus {
+    let version = first_line_of_version(&locate(binary), flag);
     EngineStatus {
         id,
         label,
@@ -49,7 +105,6 @@ fn probe(id: &'static str, label: &'static str, bin: &str, flag: &str) -> Engine
 }
 
 /// Reports which external binaries are reachable from the app.
-/// Later this will also check bundled sidecars in the app resources dir.
 #[tauri::command]
 pub fn engine_status() -> Vec<EngineStatus> {
     vec![

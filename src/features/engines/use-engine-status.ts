@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { backend, isTauri, type EngineStatus } from "@/lib/tauri";
+import { backend, isTauri, type EngineStatus } from "@/lib/backend";
 
 export function useEngineStatus() {
   const [engines, setEngines] = useState<EngineStatus[]>([]);
@@ -9,7 +9,7 @@ export function useEngineStatus() {
     let alive = true;
 
     backend
-      .engineStatus()
+      .engines()
       .then((result) => {
         if (alive) setEngines(result);
       })
@@ -28,7 +28,7 @@ export function useEngineStatus() {
   return {
     engines,
     loading,
-    available: isTauri,
+    native: isTauri,
     ffmpeg: engines.find((engine) => engine.id === "ffmpeg"),
   };
 }
