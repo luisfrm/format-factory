@@ -6,6 +6,7 @@ Conversor de archivos de escritorio: video, audio y lotes mixtos. FFmpeg hace el
 
 [![Release](https://github.com/luisfrm/format-factory/actions/workflows/build.yml/badge.svg)](https://github.com/luisfrm/format-factory/actions/workflows/build.yml)
 [![Última versión](https://img.shields.io/github/v/release/luisfrm/format-factory?label=descargar)](https://github.com/luisfrm/format-factory/releases/latest)
+[![Licencia: MIT](https://img.shields.io/badge/licencia-MIT-blue.svg)](./LICENSE)
 [![Issues](https://img.shields.io/github/issues/luisfrm/format-factory)](https://github.com/luisfrm/format-factory/issues)
 
 ## Descargar
@@ -197,3 +198,13 @@ Detalle del sistema en [`DESIGN.md`](./DESIGN.md).
 - [ ] Reordenar prioridad en la cola
 - [ ] Presets personalizados
 - [ ] Documentos (PDF → EPUB) con Calibre
+
+---
+
+## Licencia
+
+[MIT](./LICENSE) © 2026 Luis Rivas.
+
+Puedes usar, modificar y distribuir el proyecto, incluso comercialmente,
+siempre que conserves el aviso de copyright. Las contribuciones se publican
+bajo la misma licencia.
