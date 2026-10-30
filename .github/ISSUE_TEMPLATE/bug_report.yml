@@ -1,0 +1,78 @@
+name: Bug report
+description: Algo no funciona como debería
+title: "fix: "
+labels: ["bug", "needs triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por reportar. **No incluyas datos personales ni rutas privadas**
+        en capturas o logs.
+
+        Si crees que es una vulnerabilidad, no sigas: usa el
+        [reporte privado](../security/advisories/new).
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Sistema operativo
+      options:
+        - Windows 11
+        - Windows 10
+        - macOS (Apple Silicon)
+        - Linux (AppImage)
+        - Linux (deb)
+        - Otro
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Versión de Format Factory
+      placeholder: 0.2.0 (aparece en Ajustes)
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Pasos para reproducir
+      placeholder: |
+        1. Arrastro video1.mkv
+        2. Selecciono MP4
+        3. Pulso Convertir
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Qué esperabas
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Qué ocurrió
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs o capturas
+      description: Arrastra imágenes aquí. Para logs, revisa que no haya rutas privadas.
+      render: shell
+    validations:
+      required: false
+
+  - type: input
+    id: input-file
+    attributes:
+      label: Archivo de entrada
+      description: Formato, códec y tamaño aproximado. No adjuntes el archivo.
+      placeholder: MKV, H.265, 1.2 GB
+    validations:
+      required: false

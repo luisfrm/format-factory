@@ -1,0 +1,10 @@
+# Propietarios del código
+#
+# Cualquier cambio necesita la revisión del mantenedor antes de entrar a master.
+# La protección de rama exige explícitamente la aprobación del code owner.
+
+* @luisfrm
+
+/.github/ @luisfrm
+/src-tauri/ @luisfrm
+/src/lib/ @luisfrm
