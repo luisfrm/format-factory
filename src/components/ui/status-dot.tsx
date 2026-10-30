@@ -15,7 +15,7 @@ const COLORS: Record<StatusDotProps["status"], string> = {
   error: "bg-danger",
 };
 
-export function StatusDot({ status, pulse = false, className }: StatusDotProps) {
+export function StatusDot({ status, pulse = false, className }: Readonly<StatusDotProps>) {
   return (
     <span className={cn("relative flex size-2 shrink-0", className)}>
       {pulse && (

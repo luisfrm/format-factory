@@ -27,7 +27,7 @@ export function SegmentedControl<T extends string>({
   ariaLabel,
   className,
   size = "sm",
-}: SegmentedControlProps<T>) {
+}: Readonly<SegmentedControlProps<T>>) {
   const layoutId = useId();
   const buttons = useRef<(HTMLButtonElement | null)[]>([]);
 

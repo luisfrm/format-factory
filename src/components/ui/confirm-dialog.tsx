@@ -23,7 +23,7 @@ export function ConfirmDialog({
   cancelLabel = "Cancelar",
   tone = "primary",
   onConfirm,
-}: ConfirmDialogProps) {
+}: Readonly<ConfirmDialogProps>) {
   return (
     <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
       <DialogPrimitive.Portal>
