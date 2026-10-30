@@ -76,4 +76,7 @@ PR cambia la interfaz, adjunta capturas antes y después.
 
 - Los workflows de PR se ejecutan sin secretos y con `contents: read`.
 - Solo el job de publicación (en `master`) tiene permiso de escritura.
+- Los actions deben fijarse a un **commit SHA completo** (`@` + 40 caracteres
+  hexadecimales). El repositorio rechaza cualquier otra referencia, incluidos
+  los tags.
 - Si tu PR toca `.github/workflows/`, se revisará con más detalle.
