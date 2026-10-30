@@ -5,15 +5,18 @@
   "type": "module",
   "description": "Desktop file converter built with Tauri + React",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc --noEmit && vite build",
+    "dev": "tauri dev",
+    "dev:web": "vite",
     "preview": "vite preview",
+    "bundle": "tsc --noEmit && vite build",
+    "build": "node scripts/fetch-binaries.mjs && tauri build --no-bundle",
+    "build:installer": "node scripts/fetch-binaries.mjs && tauri build",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:rust": "cargo test --manifest-path src-tauri/Cargo.toml",
+    "check": "pnpm typecheck && pnpm test && pnpm test:rust",
     "tauri": "tauri",
-    "app:dev": "tauri dev",
-    "app:build": "tauri build",
     "setup:binaries": "node scripts/fetch-binaries.mjs"
   },
   "dependencies": {

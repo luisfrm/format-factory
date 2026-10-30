@@ -31,15 +31,22 @@ Copy-Item node_modules\ffprobe-static\bin\win32\x64\ffprobe.exe "src-tauri\binar
 
 | Comando | Qué hace |
 |---|---|
-| `pnpm app:dev` | App completa en ventana nativa (Tauri + Vite) |
-| `pnpm dev` | Solo frontend en el navegador, con backend simulado |
+| `pnpm dev` | App completa en ventana nativa (Tauri + Vite, hot reload) |
+| `pnpm dev:web` | Solo frontend en el navegador, con backend simulado |
+| `pnpm build` | **Ejecutable** en `src-tauri/target/release/format-factory.exe` |
+| `pnpm build:installer` | Instaladores `.msi` + `.exe` (NSIS) en `target/release/bundle/` |
+| `pnpm check` | Typecheck + tests TS + tests Rust |
 | `pnpm test` | 67 tests unitarios (Vitest + Testing Library) |
-| `cargo test --manifest-path src-tauri/Cargo.toml` | 14 tests de Rust |
-| `pnpm build` | Typecheck + bundle de producción |
-| `pnpm app:build` | Instalador final |
-| `pnpm setup:binaries` | Comprueba los sidecars de FFmpeg |
+| `pnpm test:rust` | 16 tests de Rust (incluye una conversión real) |
+| `pnpm test:watch` | Tests en modo watch |
+| `pnpm bundle` | Solo el bundle del frontend (lo usa Tauri al compilar) |
+| `pnpm typecheck` | Solo TypeScript |
+| `pnpm setup:binaries` | Verifica los sidecars de FFmpeg |
 
-> En `pnpm dev` el navegador no puede leer rutas reales ni lanzar procesos, así que
+`build` y `build:installer` primero validan los sidecars y **fallan a propósito** si
+falta FFmpeg, para no distribuir un binario que no puede convertir.
+
+> En `pnpm dev:web` el navegador no puede leer rutas reales ni lanzar procesos, así que
 > `src/lib/backend.ts` sustituye el motor por una cola simulada. Toda la UI,
 > transiciones y estados son los mismos; solo cambia quién convierte.
 
