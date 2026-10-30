@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
     inputs:
       force:
-        description: "Republicar aunque el release de esta versión ya exista"
+        description: "Completar un release en borrador o republicar tras un fallo (no sobreescribe releases publicados)"
         type: boolean
         default: false
 
@@ -228,7 +228,7 @@ jobs:
       - name: List release contents
         run: ls -lh release
 
-      - name: Create or update the release
+      - name: Publish the release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
@@ -237,16 +237,26 @@ jobs:
           set -euo pipefail
           TAG="v$VERSION"
 
+          # Los releases son inmutables: se crea en borrador, se suben los
+          # assets y solo entonces se publica. Un release ya publicado no se
+          # puede modificar; para corregirlo hay que subir la versión.
           if gh release view "$TAG" >/dev/null 2>&1; then
-            echo "Actualizando assets de $TAG"
-            gh release upload "$TAG" release/* --clobber
+            IS_DRAFT=$(gh release view "$TAG" --json isDraft --jq '.isDraft')
+            if [ "$IS_DRAFT" != "true" ]; then
+              echo "::error::$TAG ya está publicado e inmutable. Ejecuta 'pnpm release patch'."
+              exit 1
+            fi
+            echo "Completando borrador $TAG"
           else
             gh release create "$TAG" \
+              --draft \
               --target "$GITHUB_SHA" \
               --title "Format Factory $TAG" \
               --generate-notes
-            gh release upload "$TAG" release/* --clobber
           fi
+
+          gh release upload "$TAG" release/* --clobber
+          gh release edit "$TAG" --draft=false
 
           echo "### Release $TAG" >> "$GITHUB_STEP_SUMMARY"
           echo "https://github.com/$GH_REPO/releases/tag/$TAG" >> "$GITHUB_STEP_SUMMARY"
