@@ -1,4 +1,2 @@
 allowBuilds:
-  ffmpeg-static: set this to true or false
-onlyBuiltDependencies:
-  - ffmpeg-static
+  ffmpeg-static: true
