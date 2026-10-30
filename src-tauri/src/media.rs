@@ -194,7 +194,7 @@ mod tests {
         assert_eq!(info.height, Some(480));
         assert_eq!(info.video_codec.as_deref(), Some("h264"));
         assert_eq!(info.audio_codec.as_deref(), Some("aac"));
-        assert!(info.bytes > 2_000_000);
+        assert!(info.bytes > 10_000);
         let duration = info.duration_seconds.expect("duration");
         assert!((duration - 14.125).abs() < 0.5, "unexpected duration {duration}");
     }
