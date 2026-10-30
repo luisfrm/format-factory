@@ -1,0 +1,500 @@
+---
+import Base from "@/layouts/Base.astro";
+import AppPreview from "@/components/AppPreview.astro";
+import Icon from "@/components/Icon.astro";
+import { SITE } from "@/consts";
+import {
+  AUDIO_FORMATS,
+  FAQ,
+  FEATURES,
+  INPUT_FORMATS,
+  STATS,
+  STEPS,
+  VIDEO_FORMATS,
+} from "@/content";
+import {
+  formatBytes,
+  formatDate,
+  getRelease,
+  platformDownloads,
+  releaseExtras,
+  versionLabel,
+} from "@/lib/releases";
+
+const release = await getRelease();
+const platforms = platformDownloads(release);
+const extras = releaseExtras(release);
+const windows = platforms.find((platform) => platform.id === "windows")!;
+const windowsSize = formatBytes(windows.primary.size);
+const published = formatDate(release.publishedAt);
+
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: SITE.name,
+    description: SITE.description,
+    applicationCategory: "MultimediaApplication",
+    operatingSystem: "Windows 10+, macOS 12+, Linux",
+    softwareVersion: release.version ?? undefined,
+    downloadUrl: windows.primary.url,
+    installUrl: SITE.install,
+    license: SITE.license,
+    sameAs: [SITE.repo, SITE.releases],
+    inLanguage: "es",
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+    },
+    author: {
+      "@type": "Person",
+      name: SITE.author,
+      url: SITE.repo,
+    },
+    featureList: [
+      "Conversión local con FFmpeg",
+      "Lotes mixtos de video y audio",
+      "Cola serial con progreso real",
+      "Presets de calidad",
+      "Windows, macOS y Linux",
+    ],
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: SITE.name,
+    url: Astro.site?.href,
+    inLanguage: "es",
+  },
+];
+---
+
+<Base
+  title="Format Factory — Convierte video y audio sin subir nada"
+  description={SITE.description}
+  jsonLd={jsonLd}
+>
+  <!-- Hero -->
+  <section class="relative overflow-hidden">
+    <div class="grid-lines pointer-events-none absolute inset-0" aria-hidden="true"></div>
+    <div class="wrap relative grid gap-12 pb-20 pt-14 lg:grid-cols-[1.03fr_0.97fr] lg:items-center lg:gap-16 lg:pb-28 lg:pt-24">
+      <div class="hero-copy">
+        <p class="eyebrow">
+          <span class="dot"></span>
+          {versionLabel(release)} · Windows · macOS · Linux
+        </p>
+        <h1 class="mt-5 text-[clamp(2.7rem,6vw,4.5rem)] font-semibold leading-[0.97] tracking-[-0.045em]">
+          Convierte video y audio.
+          <span class="block text-accent-text">Sin subir nada.</span>
+        </h1>
+        <p class="mt-6 max-w-[56ch] text-[17px] leading-relaxed text-muted sm:text-[18px]">
+          Format Factory es un conversor de escritorio para lotes mixtos.
+          Arrastra tus archivos, elige el destino y deja que FFmpeg haga el
+          trabajo. Todo ocurre en tu equipo.
+        </p>
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+          <a class="btn btn-primary" href={windows.primary.url}>
+            <Icon name="download" size={18} strokeWidth={2} />
+            Descargar para Windows
+          </a>
+          <a class="btn btn-ghost" href="#formatos">
+            Ver formatos
+            <Icon name="arrow-right" size={17} />
+          </a>
+        </div>
+        <p class="mt-4 text-sm text-subtle">
+          {windowsSize ? `${windowsSize} · ` : ""}También para
+          <a class="text-link ml-1" href="/descargar/#macos">macOS</a> y
+          <a class="text-link ml-1" href="/descargar/#linux">Linux</a>
+          <span class="mx-1.5 text-line-strong">/</span>
+          Gratis y open source
+        </p>
+      </div>
+
+      <div class="hero-visual">
+        <AppPreview />
+      </div>
+    </div>
+  </section>
+
+  <!-- Datos rápidos -->
+  <section aria-label="Resumen del producto" class="border-y border-line bg-ink-2/50">
+    <div class="wrap grid grid-cols-2 divide-x divide-line md:grid-cols-4">
+      {STATS.map((stat, index) => (
+        <div
+          class:list={[
+            "px-5 py-7 sm:px-7",
+            index > 1 && "border-t border-line md:border-t-0",
+          ]}
+        >
+          <div class="flex items-baseline gap-2">
+            <span class="font-mono text-2xl font-medium tracking-tight text-text sm:text-[28px]">
+              {stat.value}
+            </span>
+            <span class="font-mono text-[10px] uppercase tracking-[0.1em] text-accent-text">
+              {stat.label}
+            </span>
+          </div>
+          <p class="mt-2 text-[13px] leading-snug text-subtle">{stat.detail}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Producto -->
+  <section id="producto" class="wrap py-20 lg:py-28">
+    <div class="max-w-[720px]">
+      <p class="eyebrow"><span class="dot"></span>El producto</p>
+      <h2 class="mt-4 text-[clamp(1.9rem,3.6vw,2.75rem)] font-semibold leading-[1.05] tracking-[-0.035em]">
+        Hecho para lotes, no para un archivo a la vez.
+      </h2>
+      <p class="mt-4 text-[17px] leading-relaxed text-muted">
+        Una cola clara, progreso real y decisiones que se aplican a todo el
+        lote. Sin asistentes, sin cuentas y sin esperas en la nube.
+      </p>
+    </div>
+
+    <div class="mt-10 grid gap-4 lg:mt-12 lg:grid-cols-2">
+      {FEATURES.filter((feature) => feature.span === "wide").map((feature) => (
+        <article class="card card-hover relative overflow-hidden p-6 sm:p-8">
+          <span class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-line bg-white/[0.03] text-accent-text">
+            <Icon name={feature.icon} size={19} />
+          </span>
+          <h3 class="mt-5 text-[19px] font-semibold tracking-[-0.02em]">{feature.title}</h3>
+          <p class="mt-2 max-w-[46ch] text-[15px] leading-relaxed text-muted">{feature.body}</p>
+
+          {feature.visual === "mix" ? (
+            <div class="mt-7 flex flex-wrap items-center gap-2" aria-hidden="true">
+              <span class="chip">MOV</span>
+              <Icon name="arrow-right" size={14} class="text-subtle" />
+              <span class="chip border-accent/30 bg-accent/10 text-accent-text">MP4</span>
+              <span class="ml-2 chip">WAV</span>
+              <Icon name="arrow-right" size={14} class="text-subtle" />
+              <span class="chip border-accent/30 bg-accent/10 text-accent-text">MP3</span>
+              <span class="ml-2 chip">MKV</span>
+              <Icon name="arrow-right" size={14} class="text-subtle" />
+              <span class="chip border-accent/30 bg-accent/10 text-accent-text">WebM</span>
+            </div>
+          ) : (
+            <div class="mt-7 grid grid-cols-[1fr_auto_1fr] items-center gap-3 rounded-lg border border-line bg-black/20 px-4 py-3" aria-hidden="true">
+              <div class="text-center">
+                <p class="font-mono text-[10px] uppercase tracking-[0.1em] text-subtle">Tu equipo</p>
+                <p class="mt-1 text-sm text-text">viaje-2026.mov</p>
+              </div>
+              <div class="flex flex-col items-center gap-1 text-success">
+                <Icon name="shield" size={18} />
+                <span class="font-mono text-[9px] tracking-[0.08em]">0 SUBIDAS</span>
+              </div>
+              <div class="text-center">
+                <p class="font-mono text-[10px] uppercase tracking-[0.1em] text-subtle">Salida</p>
+                <p class="mt-1 text-sm text-text">viaje-2026.mp4</p>
+              </div>
+            </div>
+          )}
+        </article>
+      ))}
+    </div>
+
+    <div class="mt-4 grid gap-4 md:grid-cols-3">
+      {FEATURES.filter((feature) => feature.span === "normal").map((feature) => (
+        <article class="card card-hover p-6">
+          <span class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-line bg-white/[0.03] text-info">
+            <Icon name={feature.icon} size={17} />
+          </span>
+          <h3 class="mt-4 text-[17px] font-semibold tracking-[-0.02em]">{feature.title}</h3>
+          <p class="mt-2 text-[14px] leading-relaxed text-muted">{feature.body}</p>
+
+          {feature.visual === "progress" && (
+            <div class="mt-5" aria-hidden="true">
+              <div class="flex items-center justify-between font-mono text-[10px] text-subtle">
+                <span>68%</span>
+                <span>ETA 00:12</span>
+              </div>
+              <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
+                <span class="block h-full w-[68%] rounded-full bg-accent"></span>
+              </div>
+            </div>
+          )}
+
+          {feature.visual === "presets" && (
+            <div class="mt-5 flex gap-1.5" aria-hidden="true">
+              <span class="rounded-md border border-line px-2.5 py-1 font-mono text-[10px] text-subtle">Alta</span>
+              <span class="rounded-md border border-accent/40 bg-accent/10 px-2.5 py-1 font-mono text-[10px] text-accent-text">Balance</span>
+              <span class="rounded-md border border-line px-2.5 py-1 font-mono text-[10px] text-subtle">Compacta</span>
+            </div>
+          )}
+
+          {feature.visual === "history" && (
+            <div class="mt-5 rounded-md border border-line bg-black/20 px-3 py-2 font-mono text-[10px] text-subtle" aria-hidden="true">
+              <span class="text-success">✓</span> viaje-2026.mov
+              <span class="float-right text-success">−412 MB</span>
+            </div>
+          )}
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <!-- Cómo funciona -->
+  <section id="como-funciona" class="border-y border-line bg-ink-2/40">
+    <div class="wrap grid gap-12 py-20 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20 lg:py-28">
+      <div>
+        <p class="eyebrow"><span class="dot"></span>El flujo</p>
+        <h2 class="mt-4 text-[clamp(1.9rem,3.6vw,2.75rem)] font-semibold leading-[1.05] tracking-[-0.035em]">
+          Tres pasos. Ninguna cuenta.
+        </h2>
+        <p class="mt-4 max-w-[42ch] text-[17px] leading-relaxed text-muted">
+          Del archivo original al convertido sin configurar un pipeline ni
+          leer documentación de códecs.
+        </p>
+
+        <ol class="mt-9 divide-y divide-line border-t border-line">
+          {STEPS.map((step) => (
+            <li class="grid grid-cols-[44px_1fr] gap-4 py-5">
+              <span class="font-mono text-[12px] font-medium text-accent-text">{step.number}</span>
+              <div>
+                <h3 class="text-[16px] font-semibold tracking-[-0.01em]">{step.title}</h3>
+                <p class="mt-1 text-[14px] leading-relaxed text-muted">{step.body}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      <div class="card self-center overflow-hidden">
+        <div class="flex items-center justify-between border-b border-line bg-white/[0.02] px-5 py-3">
+          <span class="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.1em] text-subtle">
+            <Icon name="terminal" size={14} />
+            Lo que ocurre por debajo
+          </span>
+          <span class="font-mono text-[10px] tracking-[0.06em] text-success">✓ listo</span>
+        </div>
+        <pre class="overflow-x-auto px-5 py-5 font-mono text-[12px] leading-7 text-muted sm:text-[12.5px]"><code><span class="text-subtle">$</span> ffmpeg -i viaje-2026.mov \\
+  -c:v libx264 -crf 23 \\
+  -c:a aac -b:a 192k \\
+  viaje-2026.mp4</code></pre>
+        <div class="grid grid-cols-3 divide-x divide-line border-t border-line bg-black/20">
+          <div class="px-4 py-3">
+            <p class="font-mono text-[9px] uppercase tracking-[0.1em] text-subtle">Video</p>
+            <p class="mt-1 font-mono text-[11px] text-text">h264 · CRF 23</p>
+          </div>
+          <div class="px-4 py-3">
+            <p class="font-mono text-[9px] uppercase tracking-[0.1em] text-subtle">Audio</p>
+            <p class="mt-1 font-mono text-[11px] text-text">AAC · 192k</p>
+          </div>
+          <div class="px-4 py-3">
+            <p class="font-mono text-[9px] uppercase tracking-[0.1em] text-subtle">Motor</p>
+            <p class="mt-1 font-mono text-[11px] text-text">FFmpeg 6.1</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Formatos -->
+  <section id="formatos" class="wrap py-20 lg:py-28">
+    <div class="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
+      <div>
+        <p class="eyebrow"><span class="dot"></span>Formatos</p>
+        <h2 class="mt-4 text-[clamp(1.9rem,3.6vw,2.75rem)] font-semibold leading-[1.05] tracking-[-0.035em]">
+          Casi cualquier entrada.
+          <span class="block">Nueve salidas.</span>
+        </h2>
+        <p class="mt-4 max-w-[44ch] text-[16px] leading-relaxed text-muted">
+          La entrada la decide FFmpeg. Estos son los destinos disponibles hoy:
+          cuatro de video y cinco de audio, sin instalar códecs aparte.
+        </p>
+        <p class="mt-6 font-mono text-[11px] leading-relaxed text-subtle">
+          ENTRADA<br />
+          <span class="text-muted">{INPUT_FORMATS.join(" · ")}…</span>
+        </p>
+      </div>
+
+      <div class="card overflow-hidden">
+        <div class="border-b border-line p-6 sm:p-8">
+          <div class="flex items-center justify-between gap-4">
+            <h3 class="font-mono text-[11px] uppercase tracking-[0.1em] text-subtle">Video</h3>
+            <span class="font-mono text-[10px] text-subtle">{VIDEO_FORMATS.length} destinos</span>
+          </div>
+          <div class="mt-4 flex flex-wrap gap-2">
+            {VIDEO_FORMATS.map((format) => (
+              <span class="chip min-h-10 px-4 text-[13px] text-text">{format}</span>
+            ))}
+          </div>
+        </div>
+        <div class="p-6 sm:p-8">
+          <div class="flex items-center justify-between gap-4">
+            <h3 class="font-mono text-[11px] uppercase tracking-[0.1em] text-subtle">Audio</h3>
+            <span class="font-mono text-[10px] text-subtle">{AUDIO_FORMATS.length} destinos</span>
+          </div>
+          <div class="mt-4 flex flex-wrap gap-2">
+            {AUDIO_FORMATS.map((format) => (
+              <span class="chip min-h-10 px-4 text-[13px] text-text">{format}</span>
+            ))}
+          </div>
+        </div>
+        <div class="flex flex-col gap-2 border-t border-line bg-black/20 px-6 py-4 text-[12px] text-subtle sm:flex-row sm:items-center sm:justify-between sm:px-8">
+          <span>¿Falta un destino que usas a diario?</span>
+          <a class="text-link text-[12px]" href={SITE.issues} target="_blank" rel="noopener noreferrer">
+            Pídelo en GitHub
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Descarga -->
+  <section id="descargar" class="border-y border-line bg-ink-2/40">
+    <div class="wrap py-20 lg:py-28">
+      <div class="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p class="eyebrow"><span class="dot"></span>Descarga</p>
+          <h2 class="mt-4 text-[clamp(1.9rem,3.6vw,2.75rem)] font-semibold leading-[1.05] tracking-[-0.035em]">
+            Listo en dos minutos.
+          </h2>
+          <p class="mt-3 max-w-[52ch] text-[16px] leading-relaxed text-muted">
+            {versionLabel(release)}{published ? ` · ${published}` : ""}. Sin
+            cuenta, sin telemetría y sin límite de conversiones.
+          </p>
+        </div>
+        <div class="flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-[11px] text-subtle">
+          <a class="text-link" href={extras.checksums.url} target="_blank" rel="noopener noreferrer">
+            SHA256SUMS
+          </a>
+          <a class="text-link" href={extras.install.url} target="_blank" rel="noopener noreferrer">
+            Instrucciones
+          </a>
+        </div>
+      </div>
+
+      <div class="mt-10 grid gap-4 md:grid-cols-3">
+        {platforms.map((platform) => {
+          const size = formatBytes(platform.primary.size);
+          return (
+            <article
+              id={platform.id}
+              class:list={[
+                "card flex flex-col p-6",
+                platform.recommended && "border-accent/35 bg-accent/[0.04]",
+              ]}
+            >
+              <div class="flex items-center justify-between gap-3">
+                <span class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-line bg-white/[0.03] text-muted">
+                  <Icon
+                    name={platform.id === "windows"
+                      ? "windows"
+                      : platform.id === "macos"
+                        ? "apple"
+                        : "terminal"}
+                    size={17}
+                  />
+                </span>
+                {platform.recommended ? (
+                  <span class="rounded-full border border-accent/30 bg-accent/10 px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.08em] text-accent-text">
+                    Recomendado
+                  </span>
+                ) : (
+                  <span class="font-mono text-[9px] uppercase tracking-[0.08em] text-subtle">
+                    {platform.id === "macos" ? "ARM64" : "X64"}
+                  </span>
+                )}
+              </div>
+              <h3 class="mt-4 text-[20px] font-semibold tracking-[-0.02em]">{platform.name}</h3>
+              <p class="mt-1 text-[13px] text-muted">{platform.detail}</p>
+
+              <div class="mt-5 flex items-baseline justify-between border-t border-line pt-4 font-mono text-[10px] text-subtle">
+                <span>{size ?? "—"}</span>
+                <span>{release.tag ?? "latest"}</span>
+              </div>
+
+              <a
+                class:list={[
+                  "btn mt-4 w-full",
+                  platform.recommended ? "btn-primary" : "btn-ghost",
+                ]}
+                href={platform.primary.url}
+              >
+                <Icon name="download" size={17} strokeWidth={2} />
+                {platform.primary.label}
+              </a>
+              {platform.alternate && (
+                <a
+                  class="mt-3 inline-flex min-h-11 items-center justify-center font-mono text-[11px] text-subtle underline decoration-line-strong underline-offset-4 transition-colors hover:text-text"
+                  href={platform.alternate.url}
+                >
+                  también {platform.alternate.label.replace("Descargar ", "")}
+                </a>
+              )}
+            </article>
+          );
+        })}
+      </div>
+
+      <p class="mt-6 max-w-[80ch] text-[12.5px] leading-relaxed text-subtle">
+        Los instaladores no están firmados: Windows puede mostrar SmartScreen
+        y macOS pedirá clic derecho → Abrir la primera vez. Cada release
+        incluye checksums y una guía de instalación.{" "}
+        <a class="text-link" href={SITE.latestRelease} target="_blank" rel="noopener noreferrer">
+          Ver todos los archivos en GitHub
+        </a>.
+      </p>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="wrap py-20 lg:py-28">
+    <div class="grid gap-10 lg:grid-cols-[0.75fr_1.25fr] lg:gap-20">
+      <div>
+        <p class="eyebrow"><span class="dot"></span>FAQ</p>
+        <h2 class="mt-4 text-[clamp(1.9rem,3.6vw,2.75rem)] font-semibold leading-[1.05] tracking-[-0.035em]">
+          Preguntas que ya nos han hecho.
+        </h2>
+        <p class="mt-4 max-w-[34ch] text-[15px] leading-relaxed text-muted">
+          ¿Falta algo? Abre un issue en GitHub y lo añadimos.
+        </p>
+        <a class="btn btn-ghost btn-sm mt-6" href={SITE.issues} target="_blank" rel="noopener noreferrer">
+          <Icon name="github" size={16} />
+          Abrir un issue
+        </a>
+      </div>
+
+      <div class="border-t border-line">
+        {FAQ.map((item) => (
+          <details class="faq-item">
+            <summary>{item.question}</summary>
+            <p class="faq-answer">{item.answer}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA final -->
+  <section class="wrap pb-20 lg:pb-28">
+    <div class="relative overflow-hidden rounded-panel border border-line bg-surface px-6 py-10 sm:px-10 lg:px-14 lg:py-14">
+      <div class="grid-lines pointer-events-none absolute inset-0 opacity-60" aria-hidden="true"></div>
+      <div class="relative flex flex-col gap-7 md:flex-row md:items-center md:justify-between">
+        <div>
+          <p class="eyebrow"><span class="dot"></span>Empieza</p>
+          <h2 class="mt-3 max-w-[22ch] text-[clamp(1.7rem,3vw,2.3rem)] font-semibold leading-[1.08] tracking-[-0.035em]">
+            Tus archivos se quedan donde deben.
+          </h2>
+          <p class="mt-2 text-[15px] text-muted">
+            {versionLabel(release)} · Windows, macOS y Linux.
+          </p>
+        </div>
+        <div class="flex flex-col gap-3 sm:flex-row">
+          <a class="btn btn-primary" href={windows.primary.url}>
+            <Icon name="download" size={18} strokeWidth={2} />
+            Descargar
+          </a>
+          <a class="btn btn-ghost" href="/descargar/">
+            Todas las versiones
+            <Icon name="arrow-right" size={16} />
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>

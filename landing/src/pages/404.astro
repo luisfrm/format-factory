@@ -1,0 +1,30 @@
+---
+import Base from "@/layouts/Base.astro";
+import Icon from "@/components/Icon.astro";
+---
+
+<Base
+  title="Página no encontrada — Format Factory"
+  description="La página que buscas no existe. Vuelve al inicio o descarga Format Factory."
+  noindex={true}
+>
+  <section class="wrap flex min-h-[62vh] flex-col items-start justify-center py-20">
+    <p class="font-mono text-[11px] uppercase tracking-[0.12em] text-accent-text">
+      404 · RUTA NO ENCONTRADA
+    </p>
+    <h1 class="mt-4 max-w-[18ch] text-[clamp(2.4rem,6vw,4rem)] font-semibold leading-[1] tracking-[-0.045em]">
+      Esta ruta no convierte nada.
+    </h1>
+    <p class="mt-4 max-w-[48ch] text-[17px] text-muted">
+      El enlace puede estar roto o la página se ha movido. Prueba desde el
+      inicio o ve directo a las descargas.
+    </p>
+    <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+      <a class="btn btn-primary" href="/">
+        Volver al inicio
+        <Icon name="arrow-right" size={17} />
+      </a>
+      <a class="btn btn-ghost" href="/descargar/">Descargar</a>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <radialGradient id="glow" cx="82%" cy="0%" r="65%">
+      <stop offset="0%" stop-color="#FF4D67" stop-opacity="0.2"/>
+      <stop offset="60%" stop-color="#FF4D67" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="72" height="72" patternUnits="userSpaceOnUse">
+      <path d="M72 0H0V72" fill="none" stroke="#FFFFFF" stroke-opacity="0.05" stroke-width="1"/>
+    </pattern>
+    <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.5"/>
+      <stop offset="80%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+    <mask id="gridMask">
+      <rect width="1200" height="630" fill="url(#fade)"/>
+    </mask>
+  </defs>
+
+  <rect width="1200" height="630" fill="#0B0D12"/>
+  <rect width="1200" height="630" fill="url(#grid)" mask="url(#gridMask)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+
+  <!-- Marca -->
+  <g transform="translate(80 68)">
+    <rect width="44" height="44" rx="11" fill="#141822" stroke="#2A3040"/>
+    <path d="M11 17h20" stroke="#FF4D67" stroke-width="3" stroke-linecap="round"/>
+    <path d="m26 12.5 4.5 4.5-4.5 4.5" stroke="#FF4D67" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M33 27H13" stroke="#7BD0FF" stroke-width="3" stroke-linecap="round"/>
+    <path d="m18 22.5-4.5 4.5 4.5 4.5" stroke="#7BD0FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="60" y="19" fill="#E8EAF0" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="18" font-weight="600" letter-spacing="-0.3">Format Factory</text>
+    <text x="60" y="35" fill="#8A92A3" font-family="JetBrains Mono, Consolas, monospace" font-size="10" letter-spacing="1.6">CONVERSOR DE ESCRITORIO</text>
+  </g>
+
+  <!-- Titular -->
+  <text x="80" y="246" fill="#E8EAF0" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="66" font-weight="600" letter-spacing="-3.2">Convierte video</text>
+  <text x="80" y="324" fill="#E8EAF0" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="66" font-weight="600" letter-spacing="-3.2">y audio.</text>
+  <text x="80" y="410" fill="#FF8B9C" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="66" font-weight="600" letter-spacing="-3.2">Sin subir nada.</text>
+
+  <text x="80" y="466" fill="#A0A7B6" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="21" letter-spacing="-0.2">FFmpeg en local. Lotes mixtos.</text>
+  <text x="80" y="494" fill="#A0A7B6" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="21" letter-spacing="-0.2">Windows, macOS y Linux.</text>
+
+  <!-- Etiquetas -->
+  <g font-family="JetBrains Mono, Consolas, monospace" font-size="12" letter-spacing="1.2">
+    <rect x="80" y="530" width="122" height="40" rx="20" fill="#FF4D67" fill-opacity="0.1" stroke="#FF4D67" stroke-opacity="0.35"/>
+    <text x="101" y="555" fill="#FF8B9C">GRATIS · MIT</text>
+
+    <rect x="214" y="530" width="164" height="40" rx="20" fill="#FFFFFF" fill-opacity="0.03" stroke="#FFFFFF" stroke-opacity="0.14"/>
+    <text x="235" y="555" fill="#A0A7B6">SIN TELEMETRÍA</text>
+  </g>
+
+  <text x="1120" y="596" text-anchor="end" fill="#6F7686" font-family="JetBrains Mono, Consolas, monospace" font-size="13" letter-spacing="1.6">FFMPEG 6.1 · SIN TELEMETRÍA</text>
+
+  <!-- Ventana de cola -->
+  <g transform="translate(700 148)">
+    <rect width="420" height="340" rx="18" fill="#0F1219" stroke="#2A3040" stroke-width="1.5"/>
+    <rect width="420" height="44" rx="18" fill="#12151D"/>
+    <rect y="26" width="420" height="18" fill="#12151D"/>
+    <circle cx="24" cy="22" r="5" fill="#4A2A32"/>
+    <circle cx="42" cy="22" r="5" fill="#333A49"/>
+    <circle cx="60" cy="22" r="5" fill="#333A49"/>
+    <text x="86" y="26" fill="#B9BFCC" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="12" font-weight="500">Format Factory</text>
+    <text x="396" y="26" text-anchor="end" fill="#6F7686" font-family="JetBrains Mono, Consolas, monospace" font-size="9" letter-spacing="1">COLA · 3</text>
+
+    <g transform="translate(20 64)">
+      <rect width="380" height="78" rx="10" fill="#141922" stroke="#FFFFFF" stroke-opacity="0.07"/>
+      <text x="16" y="26" fill="#DFE3EB" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="13" font-weight="500">viaje-2026.mov</text>
+      <rect x="330" y="14" width="36" height="18" rx="4" fill="#FF4D67" fill-opacity="0.14"/>
+      <text x="348" y="27" text-anchor="middle" fill="#FF8B9C" font-family="JetBrains Mono, Consolas, monospace" font-size="9" font-weight="600">MP4</text>
+      <text x="16" y="46" fill="#737B8C" font-family="JetBrains Mono, Consolas, monospace" font-size="9">24,6 MB/s · ETA 00:12 · 68%</text>
+      <rect x="16" y="58" width="348" height="4" rx="2" fill="#FFFFFF" fill-opacity="0.06"/>
+      <rect x="16" y="58" width="237" height="4" rx="2" fill="#FF4D67"/>
+    </g>
+
+    <g transform="translate(20 152)">
+      <rect width="380" height="78" rx="10" fill="#121A1A" stroke="#4EDEA3" stroke-opacity="0.16"/>
+      <text x="16" y="26" fill="#DFE3EB" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="13" font-weight="500">podcast-ep12.wav</text>
+      <rect x="330" y="14" width="36" height="18" rx="4" fill="#4EDEA3" fill-opacity="0.12"/>
+      <text x="348" y="27" text-anchor="middle" fill="#4EDEA3" font-family="JetBrains Mono, Consolas, monospace" font-size="9" font-weight="600">MP3</text>
+      <text x="16" y="46" fill="#737B8C" font-family="JetBrains Mono, Consolas, monospace" font-size="9">Listo · 4,1 MB · −72%</text>
+      <rect x="16" y="58" width="348" height="4" rx="2" fill="#4EDEA3" fill-opacity="0.25"/>
+      <rect x="16" y="58" width="348" height="4" rx="2" fill="#4EDEA3"/>
+    </g>
+
+    <g transform="translate(20 240)">
+      <rect width="380" height="72" rx="10" fill="#141922" stroke="#FFFFFF" stroke-opacity="0.07"/>
+      <text x="16" y="26" fill="#DFE3EB" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="13" font-weight="500">boda-clip-04.mkv</text>
+      <rect x="330" y="14" width="36" height="18" rx="4" fill="#FFFFFF" fill-opacity="0.06"/>
+      <text x="348" y="27" text-anchor="middle" fill="#8A92A3" font-family="JetBrains Mono, Consolas, monospace" font-size="9" font-weight="600">MKV</text>
+      <text x="16" y="46" fill="#737B8C" font-family="JetBrains Mono, Consolas, monospace" font-size="9">8,2 MB/s · ETA 01:04 · 31%</text>
+      <rect x="16" y="58" width="348" height="4" rx="2" fill="#FFFFFF" fill-opacity="0.06"/>
+      <rect x="16" y="58" width="108" height="4" rx="2" fill="#4B5468"/>
+    </g>
+  </g>
+</svg>

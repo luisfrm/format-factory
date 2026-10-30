@@ -1,0 +1,293 @@
+---
+import Base from "@/layouts/Base.astro";
+import Icon from "@/components/Icon.astro";
+import { SITE } from "@/consts";
+import { DOWNLOAD_NOTES } from "@/content";
+import {
+  formatBytes,
+  formatDate,
+  getRelease,
+  platformDownloads,
+  releaseExtras,
+  versionLabel,
+} from "@/lib/releases";
+
+const release = await getRelease();
+const platforms = platformDownloads(release);
+const extras = releaseExtras(release);
+const published = formatDate(release.publishedAt);
+const sees = platforms.find((platform) => platform.id === "windows")!;
+
+const installSteps = [
+  {
+    os: "Windows",
+    detail: "Windows 10 u 11 · x64",
+    steps: [
+      "Descarga el .exe (NSIS) o el .msi.",
+      "Ejecuta el instalador. SmartScreen puede avisar: «Más información» → «Ejecutar de todas formas».",
+      "Abre Format Factory desde el menú Inicio.",
+    ],
+  },
+  {
+    os: "macOS",
+    detail: "macOS 12+ · Apple Silicon",
+    steps: [
+      "Abre el .dmg y arrastra Format Factory a Aplicaciones.",
+      "La primera vez, clic derecho sobre la app → Abrir.",
+      "Confirma la apertura en el diálogo de Gatekeeper.",
+    ],
+  },
+  {
+    os: "Linux",
+    detail: "Linux x64 · AppImage o .deb",
+    steps: [
+      "AppImage: chmod +x y ejecuta el archivo.",
+      "Debian/Ubuntu: sudo apt install ./Format-Factory-*.deb.",
+      "Si el AppImage no arranca, revisa FUSE o usa el .deb.",
+    ],
+  },
+] as const;
+
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: SITE.name,
+    description: SITE.description,
+    applicationCategory: "MultimediaApplication",
+    operatingSystem: "Windows 10+, macOS 12+, Linux",
+    softwareVersion: release.version ?? undefined,
+    downloadUrl: sees.primary.url,
+    installUrl: SITE.install,
+    license: SITE.license,
+    offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+    author: { "@type": "Person", name: SITE.author, url: SITE.repo },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Inicio", item: Astro.site?.href },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Descargar",
+        item: new URL("/descargar/", Astro.site ?? Astro.url).href,
+      },
+    ],
+  },
+];
+---
+
+<Base
+  title="Descargar Format Factory — Windows, macOS y Linux"
+  description="Descarga Format Factory gratis: instaladores para Windows x64, macOS Apple Silicon y Linux x64. Conversor local de video y audio, sin cuenta y sin telemetría."
+  jsonLd={jsonLd}
+>
+  <section class="relative overflow-hidden border-b border-line">
+    <div class="grid-lines pointer-events-none absolute inset-0" aria-hidden="true"></div>
+    <div class="wrap relative py-14 lg:py-20">
+      <nav aria-label="Migas de pan" class="font-mono text-[10px] uppercase tracking-[0.1em] text-subtle">
+        <a class="transition-colors hover:text-text" href="/">Inicio</a>
+        <span class="mx-2 text-line-strong">/</span>
+        <span class="text-muted">Descargar</span>
+      </nav>
+
+      <div class="mt-8 grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-end">
+        <div>
+          <p class="eyebrow"><span class="dot"></span>{versionLabel(release)}</p>
+          <h1 class="mt-4 text-[clamp(2.4rem,5vw,3.8rem)] font-semibold leading-[1] tracking-[-0.045em]">
+            Descarga Format Factory
+          </h1>
+          <p class="mt-4 max-w-[56ch] text-[17px] leading-relaxed text-muted">
+            Instaladores directos para Windows, macOS y Linux. Sin cuenta, sin
+            telemetría y sin límite de conversiones.
+          </p>
+        </div>
+
+        <dl class="grid grid-cols-2 gap-4 border-t border-line pt-5 text-sm sm:grid-cols-3 lg:border-t-0 lg:pt-0">
+          <div>
+            <dt class="font-mono text-[9px] uppercase tracking-[0.1em] text-subtle">Versión</dt>
+            <dd class="mt-1 font-mono text-[13px] text-text">{release.tag ?? "latest"}</dd>
+          </div>
+          <div>
+            <dt class="font-mono text-[9px] uppercase tracking-[0.1em] text-subtle">Publicada</dt>
+            <dd class="mt-1 text-[13px] text-text">{published ?? "—"}</dd>
+          </div>
+          <div>
+            <dt class="font-mono text-[9px] uppercase tracking-[0.1em] text-subtle">Licencia</dt>
+            <dd class="mt-1 text-[13px] text-text">MIT</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap py-14 lg:py-20">
+    <div class="grid gap-4 md:grid-cols-3">
+      {platforms.map((platform) => {
+        const size = formatBytes(platform.primary.size);
+        return (
+          <article
+            id={platform.id}
+            class:list={[
+              "card flex flex-col p-6 sm:p-7",
+              platform.recommended && "border-accent/35 bg-accent/[0.04]",
+            ]}
+          >
+            <div class="flex items-center justify-between gap-3">
+              <span class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-line bg-white/[0.03] text-muted">
+                <Icon
+                  name={platform.id === "windows"
+                    ? "windows"
+                    : platform.id === "macos"
+                      ? "apple"
+                      : "terminal"}
+                  size={17}
+                />
+              </span>
+              <span class="font-mono text-[9px] uppercase tracking-[0.08em] text-subtle">
+                {platform.recommended
+                  ? "Recomendado"
+                  : platform.id === "macos"
+                    ? "ARM64"
+                    : "X64"}
+              </span>
+            </div>
+            <h2 class="mt-4 text-[21px] font-semibold tracking-[-0.02em]">{platform.name}</h2>
+            <p class="mt-1 text-[13px] text-muted">{platform.detail}</p>
+
+            <div class="mt-5 flex items-baseline justify-between border-t border-line pt-4 font-mono text-[10px] text-subtle">
+              <span>{size ?? "—"}</span>
+              <span>{release.tag ?? "latest"}</span>
+            </div>
+
+            <a
+              class:list={[
+                "btn mt-4 w-full",
+                platform.recommended ? "btn-primary" : "btn-ghost",
+              ]}
+              href={platform.primary.url}
+            >
+              <Icon name="download" size={17} strokeWidth={2} />
+              {platform.primary.label}
+            </a>
+            {platform.alternate && (
+              <a
+                class="mt-3 inline-flex min-h-11 items-center justify-center font-mono text-[11px] text-subtle underline decoration-line-strong underline-offset-4 transition-colors hover:text-text"
+                href={platform.alternate.url}
+              >
+                también {platform.alternate.label.replace("Descargar ", "")}
+              </a>
+            )}
+          </article>
+        );
+      })}
+    </div>
+
+    <div class="mt-6 flex flex-col gap-3 rounded-card border border-line bg-surface px-5 py-4 text-[13px] text-muted sm:flex-row sm:items-center sm:justify-between">
+      <p>
+        <span class="font-mono text-[10px] uppercase tracking-[0.08em] text-warning">Sin firma</span>
+        <span class="ml-2">Windows puede mostrar SmartScreen y macOS pedirá clic derecho → Abrir.</span>
+      </p>
+      <div class="flex shrink-0 gap-4 font-mono text-[11px]">
+        <a class="text-link" href={extras.install.url} target="_blank" rel="noopener noreferrer">INSTALL.md</a>
+        <a class="text-link" href={extras.checksums.url} target="_blank" rel="noopener noreferrer">SHA256SUMS</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-y border-line bg-ink-2/40">
+    <div class="wrap grid gap-10 py-16 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20 lg:py-20">
+      <div>
+        <p class="eyebrow"><span class="dot"></span>Instalación</p>
+        <h2 class="mt-4 text-[clamp(1.8rem,3.2vw,2.4rem)] font-semibold leading-[1.06] tracking-[-0.03em]">
+          Dos minutos, sin dependencias.
+        </h2>
+        <p class="mt-4 max-w-[40ch] text-[15px] leading-relaxed text-muted">
+          FFmpeg y FFprobe viajan dentro de la app. No hay que instalar
+          códecs, Homebrew ni nada por el estilo.
+        </p>
+        <p class="mt-6 font-mono text-[10px] uppercase tracking-[0.08em] text-subtle">
+          Requisitos
+        </p>
+        <ul class="mt-3 space-y-2 text-[14px] text-muted">
+          {DOWNLOAD_NOTES.map((note) => (
+            <li class="flex items-start gap-2">
+              <Icon name="check" size={14} class="mt-1 shrink-0 text-success" />
+              {note}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="space-y-6">
+        {installSteps.map((item) => (
+          <div>
+            <div class="flex items-baseline justify-between gap-4 border-b border-line pb-2">
+              <h3 class="text-[15px] font-semibold">{item.os}</h3>
+              <span class="font-mono text-[9px] uppercase tracking-[0.08em] text-subtle">{item.detail}</span>
+            </div>
+            <ol class="mt-3 space-y-2">
+              {item.steps.map((step, index) => (
+                <li class="grid grid-cols-[20px_1fr] gap-2 text-[14px] leading-relaxed text-muted">
+                  <span class="font-mono text-[10px] text-accent-text">{String(index + 1).padStart(2, "0")}</span>
+                  <span>{step}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap py-16 lg:py-20">
+    <div class="grid gap-6 md:grid-cols-2">
+      <div class="card p-6 sm:p-7">
+        <h2 class="text-[17px] font-semibold tracking-[-0.01em]">Verifica la descarga</h2>
+        <p class="mt-2 text-[14px] leading-relaxed text-muted">
+          Descarga <code class="font-mono text-[12px] text-text">SHA256SUMS.txt</code> y compara el hash del
+          instalador antes de ejecutarlo.
+        </p>
+        <pre class="mt-4 overflow-x-auto rounded-md border border-line bg-black/25 px-4 py-3 font-mono text-[11.5px] leading-6 text-muted"><code>sha256sum -c SHA256SUMS.txt      <span class="text-subtle"># Linux</span>
+shasum -a 256 -c SHA256SUMS.txt  <span class="text-subtle"># macOS</span></code></pre>
+        <a class="text-link mt-4 inline-flex items-center gap-1.5 text-[13px]" href={extras.checksums.url} target="_blank" rel="noopener noreferrer">
+          Abrir SHA256SUMS.txt
+          <Icon name="arrow-up-right" size={13} />
+        </a>
+      </div>
+
+      <div class="card p-6 sm:p-7">
+        <h2 class="text-[17px] font-semibold tracking-[-0.01em]">¿Actualizaciones?</h2>
+        <p class="mt-2 text-[14px] leading-relaxed text-muted">
+          La app comprueba si hay una versión nueva al arrancar. También puedes
+          seguir los releases del repositorio o descargar la última versión
+          desde esta página.
+        </p>
+        <div class="mt-4 flex flex-wrap gap-3">
+          <a class="btn btn-ghost btn-sm" href={SITE.latestRelease} target="_blank" rel="noopener noreferrer">
+            <Icon name="github" size={15} />
+            Releases
+          </a>
+          <a class="btn btn-ghost btn-sm" href={SITE.install} target="_blank" rel="noopener noreferrer">
+            Guía completa
+            <Icon name="arrow-up-right" size={13} />
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap pb-20">
+    <div class="flex flex-col gap-4 border-t border-line pt-6 text-[13px] text-subtle sm:flex-row sm:items-center sm:justify-between">
+      <p>
+        {versionLabel(release)} · {release.assets.length} archivos publicados.
+      </p>
+      <a class="text-link inline-flex items-center gap-1.5" href="/">
+        Volver al inicio
+        <Icon name="arrow-right" size={13} />
+      </a>
+    </div>
+  </section>
+</Base>

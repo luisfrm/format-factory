@@ -1,0 +1,15 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "format-factory-landing",
+  "compatibility_date": "2026-10-30",
+  // Solo assets: no hay Worker script, así que ninguna petición se factura.
+  // Los archivos se sirven gratis e ilimitados desde la red de Cloudflare.
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page"
+  },
+  // El dominio público se añade desde el dashboard como Custom Domain.
+  // No se declara `routes` aquí para que Wrangler no gestione el dominio.
+  "workers_dev": false,
+  "preview_urls": false
+}

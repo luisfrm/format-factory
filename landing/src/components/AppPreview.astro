@@ -1,0 +1,460 @@
+---
+import Icon from "@/components/Icon.astro";
+---
+
+<div class="preview-wrap" role="img" aria-label="Vista previa de Format Factory: una cola con tres archivos, uno convirtiéndose al 68%, otro listo y otro en espera, con velocidad y tiempo restante.">
+  <div class="float float-local">
+    <span class="float-dot"></span>
+    LOCAL · SIN SUBIDAS
+  </div>
+  <div class="float float-code">FFMPEG 6.1.1</div>
+
+  <div class="app-window">
+    <div class="titlebar">
+      <div class="traffic" aria-hidden="true">
+        <span></span><span></span><span></span>
+      </div>
+      <span class="title">Format Factory</span>
+      <span class="title-meta">COLA · 3</span>
+    </div>
+
+    <div class="window-body">
+      <aside class="rail" aria-hidden="true">
+        <span class="rail-item is-active"><Icon name="layers" size={15} /></span>
+        <span class="rail-item"><Icon name="activity" size={15} /></span>
+        <span class="rail-item"><Icon name="history" size={15} /></span>
+        <span class="rail-item"><Icon name="sliders" size={15} /></span>
+        <span class="rail-spacer"></span>
+        <span class="rail-avatar">FF</span>
+      </aside>
+
+      <div class="queue">
+        <div class="queue-head">
+          <span>Cola de conversión</span>
+          <span class="queue-count">3 archivos</span>
+        </div>
+
+        <div class="row">
+          <span class="file-icon"><Icon name="file" size={14} /></span>
+          <div class="file-main">
+            <div class="file-line">
+              <span class="file-name">viaje-2026.mov</span>
+              <span class="badge">MP4</span>
+            </div>
+            <div class="file-meta">24,6 MB/s · ETA 00:12 · 68%</div>
+            <div class="bar"><span class="bar-fill bar-active"></span></div>
+          </div>
+        </div>
+
+        <div class="row row-done">
+          <span class="file-icon"><Icon name="check" size={14} /></span>
+          <div class="file-main">
+            <div class="file-line">
+              <span class="file-name">podcast-ep12.wav</span>
+              <span class="badge badge-done">MP3</span>
+            </div>
+            <div class="file-meta">Listo · 4,1 MB · −72%</div>
+            <div class="bar"><span class="bar-fill bar-done"></span></div>
+          </div>
+        </div>
+
+        <div class="row">
+          <span class="file-icon"><Icon name="file" size={14} /></span>
+          <div class="file-main">
+            <div class="file-line">
+              <span class="file-name">boda-clip-04.mkv</span>
+              <span class="badge badge-wait">MKV</span>
+            </div>
+            <div class="file-meta">8,2 MB/s · ETA 01:04 · 31%</div>
+            <div class="bar"><span class="bar-fill bar-wait"></span></div>
+          </div>
+        </div>
+
+        <div class="queue-foot">
+          <span><span class="foot-dot"></span>1 en curso · 1 listo · 1 en espera</span>
+          <span class="foot-save">412 MB ahorrados</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .preview-wrap {
+    position: relative;
+    padding: 18px 0 18px 18px;
+  }
+
+  .app-window {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #2a3040;
+    border-radius: 14px;
+    background: #0f1219;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.04) inset,
+      0 28px 70px rgba(0, 0, 0, 0.55),
+      0 0 0 1px rgba(0, 0, 0, 0.3);
+  }
+
+  .app-window::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      420px 180px at 85% 0%,
+      rgba(255, 77, 103, 0.09),
+      transparent 70%
+    );
+  }
+
+  .titlebar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 38px;
+    padding: 0 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    background: #12151d;
+  }
+
+  .traffic {
+    display: flex;
+    gap: 6px;
+  }
+
+  .traffic span {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: #333a49;
+  }
+
+  .traffic span:first-child {
+    background: #4a2a32;
+  }
+
+  .title {
+    font-size: 11px;
+    font-weight: 550;
+    color: #b9bfcc;
+  }
+
+  .title-meta {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    color: #6f7686;
+  }
+
+  .window-body {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    min-height: 318px;
+  }
+
+  .rail {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 0;
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+    background: #10131a;
+  }
+
+  .rail-item {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    color: #6f7686;
+  }
+
+  .rail-item.is-active {
+    background: rgba(255, 77, 103, 0.12);
+    color: #ff8b9c;
+  }
+
+  .rail-spacer {
+    flex: 1;
+  }
+
+  .rail-avatar {
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 999px;
+    background: #232938;
+    font-family: var(--font-mono);
+    font-size: 8px;
+    color: #a0a7b6;
+  }
+
+  .queue {
+    padding: 14px;
+  }
+
+  .queue-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 11px;
+    font-weight: 550;
+    color: #c6ccd8;
+  }
+
+  .queue-count {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    color: #6f7686;
+  }
+
+  .row {
+    display: flex;
+    gap: 9px;
+    padding: 10px;
+    margin-bottom: 7px;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 8px;
+    background: #141922;
+  }
+
+  .row-done {
+    background: #121a1a;
+    border-color: rgba(78, 222, 163, 0.16);
+  }
+
+  .file-icon {
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    flex: none;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.04);
+    color: #8a92a3;
+  }
+
+  .row-done .file-icon {
+    color: #4edea3;
+  }
+
+  .file-main {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .file-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .file-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 11.5px;
+    font-weight: 500;
+    color: #dfe3eb;
+  }
+
+  .badge {
+    margin-left: auto;
+    flex: none;
+    padding: 2px 5px;
+    border-radius: 4px;
+    background: rgba(255, 77, 103, 0.14);
+    color: #ff8b9c;
+    font-family: var(--font-mono);
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+
+  .badge-done {
+    background: rgba(78, 222, 163, 0.12);
+    color: #4edea3;
+  }
+
+  .badge-wait {
+    background: rgba(255, 255, 255, 0.06);
+    color: #8a92a3;
+  }
+
+  .file-meta {
+    margin-top: 3px;
+    font-family: var(--font-mono);
+    font-size: 8.5px;
+    color: #737b8c;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .bar {
+    height: 3px;
+    margin-top: 8px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .bar-fill {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    transform-origin: left;
+  }
+
+  .bar-active {
+    width: 68%;
+    background: #ff4d67;
+  }
+
+  .bar-done {
+    width: 100%;
+    background: #4edea3;
+  }
+
+  .bar-wait {
+    width: 31%;
+    background: #4b5468;
+  }
+
+  .queue-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 12px;
+    padding-top: 11px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    font-family: var(--font-mono);
+    font-size: 8.5px;
+    letter-spacing: 0.03em;
+    color: #737b8c;
+  }
+
+  .foot-dot {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    margin-right: 5px;
+    border-radius: 999px;
+    background: #ff4d67;
+    vertical-align: 1px;
+  }
+
+  .foot-save {
+    color: #4edea3;
+  }
+
+  .float {
+    position: absolute;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 7px;
+    background: rgba(11, 13, 18, 0.86);
+    backdrop-filter: blur(8px);
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    color: #a0a7b6;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  }
+
+  .float-local {
+    top: -10px;
+    right: 8px;
+  }
+
+  .float-code {
+    bottom: 0;
+    left: 0;
+    color: #737b8c;
+  }
+
+  .float-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 999px;
+    background: #4edea3;
+    box-shadow: 0 0 0 3px rgba(78, 222, 163, 0.12);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .app-window {
+      animation: settle 900ms 220ms var(--ease-out) both;
+    }
+
+    .bar-active,
+    .bar-done,
+    .bar-wait {
+      animation: fill 1000ms 520ms var(--ease-out) both;
+    }
+
+    @keyframes settle {
+      from {
+        transform: translateY(10px) scale(0.99);
+        opacity: 0;
+      }
+      to {
+        transform: none;
+        opacity: 1;
+      }
+    }
+
+    @keyframes fill {
+      from {
+        transform: scaleX(0);
+      }
+      to {
+        transform: scaleX(1);
+      }
+    }
+  }
+
+  @media (max-width: 700px) {
+    .preview-wrap {
+      padding: 16px 0 16px 10px;
+    }
+
+    .float-local {
+      right: 8px;
+    }
+
+    .window-body {
+      min-height: 300px;
+    }
+  }
+
+  @media (max-width: 430px) {
+    .window-body {
+      grid-template-columns: 36px minmax(0, 1fr);
+      min-height: 286px;
+    }
+
+    .rail {
+      padding-inline: 4px;
+    }
+
+    .queue {
+      padding: 10px;
+    }
+
+    .float-code {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,75 @@
+---
+import Logo from "@/components/Logo.astro";
+import Icon from "@/components/Icon.astro";
+import { SITE } from "@/consts";
+
+const year = new Date().getFullYear();
+---
+
+<footer class="mt-24 border-t border-line">
+  <div class="wrap py-14">
+    <div class="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
+      <div>
+        <a href="/" class="inline-flex items-center gap-2.5" aria-label="Format Factory, inicio">
+          <Logo size={28} />
+          <span class="text-[15px] font-semibold tracking-tight">Format Factory</span>
+        </a>
+        <p class="mt-4 max-w-[30ch] text-sm leading-relaxed text-muted">
+          Conversor de archivos de escritorio. FFmpeg hace el trabajo, la app
+          lo hace fácil.
+        </p>
+        <p class="mt-5 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.08em] text-subtle">
+          <span class="h-1.5 w-1.5 rounded-full bg-success"></span>
+          Open source · MIT
+        </p>
+      </div>
+
+      <nav aria-label="Producto">
+        <h2 class="font-mono text-[11px] uppercase tracking-[0.1em] text-subtle">
+          Producto
+        </h2>
+        <ul class="mt-4 space-y-2.5 text-sm">
+          <li><a class="nav-link" href="/descargar/">Descargar</a></li>
+          <li><a class="nav-link" href="/#formatos">Formatos</a></li>
+          <li><a class="nav-link" href="/#como-funciona">Cómo funciona</a></li>
+          <li><a class="nav-link" href="/#faq">Preguntas frecuentes</a></li>
+        </ul>
+      </nav>
+
+      <nav aria-label="Proyecto">
+        <h2 class="font-mono text-[11px] uppercase tracking-[0.1em] text-subtle">
+          Proyecto
+        </h2>
+        <ul class="mt-4 space-y-2.5 text-sm">
+          <li>
+            <a class="nav-link inline-flex items-center gap-1.5" href={SITE.repo} target="_blank" rel="noopener noreferrer">
+              GitHub
+              <Icon name="arrow-up-right" size={13} />
+            </a>
+          </li>
+          <li><a class="nav-link" href={SITE.issues} target="_blank" rel="noopener noreferrer">Issues</a></li>
+          <li><a class="nav-link" href={`${SITE.repo}/blob/master/CONTRIBUTING.md`} target="_blank" rel="noopener noreferrer">Contribuir</a></li>
+          <li><a class="nav-link" href={SITE.license} target="_blank" rel="noopener noreferrer">Licencia MIT</a></li>
+        </ul>
+      </nav>
+
+      <nav aria-label="Legal">
+        <h2 class="font-mono text-[11px] uppercase tracking-[0.1em] text-subtle">
+          Legal
+        </h2>
+        <ul class="mt-4 space-y-2.5 text-sm">
+          <li><a class="nav-link" href="/privacidad/">Privacidad</a></li>
+          <li><a class="nav-link" href={SITE.security} target="_blank" rel="noopener noreferrer">Seguridad</a></li>
+          <li><a class="nav-link" href={SITE.install} target="_blank" rel="noopener noreferrer">Instalación</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="mt-12 flex flex-col gap-3 border-t border-line pt-6 text-xs text-subtle sm:flex-row sm:items-center sm:justify-between">
+      <p>© {year} {SITE.author}. Publicado bajo licencia MIT.</p>
+      <p class="font-mono tracking-[0.04em]">
+        Hecho con FFmpeg 6.1 · Sin cookies · Sin analítica
+      </p>
+    </div>
+  </div>
+</footer>
