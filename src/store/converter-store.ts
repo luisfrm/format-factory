@@ -20,6 +20,8 @@ export type StagedFile = {
   width?: number;
   height?: number;
   target: TargetFormat;
+  /** Linked conversion job, once the batch is started. */
+  jobId?: string;
   /** True while ffprobe is still reading the file. */
   probing: boolean;
 };
@@ -38,6 +40,8 @@ type ConverterState = {
   clearFiles: () => void;
   setTarget: (id: string, target: TargetFormat) => void;
   applyTargetToAll: (target: TargetFormat) => void;
+  /** Links freshly created jobs to their staged files (same order as `start`). */
+  attachJobs: (entries: { fileId: string; jobId: string }[]) => void;
   setQuality: (quality: QualityPreset) => void;
   setOutputDirectory: (directory: string | null) => void;
   pickOutputDirectory: () => Promise<void>;
@@ -137,7 +141,7 @@ export const useConverterStore = create<ConverterState>()((set, get) => ({
   setTarget(id, target) {
     set((state) => ({
       files: state.files.map((file) =>
-        file.id === id ? { ...file, target } : file,
+        file.id === id ? { ...file, target, jobId: undefined } : file,
       ),
     }));
   },
@@ -145,7 +149,20 @@ export const useConverterStore = create<ConverterState>()((set, get) => ({
   applyTargetToAll(target) {
     set((state) => ({
       files: state.files.map((file) =>
-        canTarget(file.kind, target) ? { ...file, target } : file,
+        canTarget(file.kind, target)
+          ? { ...file, target, jobId: undefined }
+          : file,
+      ),
+    }));
+  },
+
+  attachJobs(entries) {
+    if (entries.length === 0) return;
+    const byFile = new Map(entries.map((entry) => [entry.fileId, entry.jobId]));
+
+    set((state) => ({
+      files: state.files.map((file) =>
+        byFile.has(file.id) ? { ...file, jobId: byFile.get(file.id) } : file,
       ),
     }));
   },
