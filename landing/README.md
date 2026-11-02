@@ -106,7 +106,9 @@ la API falla, el build no se rompe: los botones apuntan a GitHub Releases.
 
 Por eso el workflow se dispara con `release: published` y vuelve a construir la
 landing cuando sale una versión nueva. No hay llamadas a la API desde el
-navegador.
+navegador. **La versión no está hardcodeada**: cada build enlaza a
+`releases/latest`, así que al publicar una versión nueva basta con reconstruir
+(o dejar que el workflow lo haga).
 
 ---
 
@@ -191,8 +193,8 @@ pnpm dlx wrangler r2 bucket create format-factory-downloads
 
 # 3. Subir cada asset del release con la misma clave que usa la landing
 pnpm dlx wrangler r2 object put \
-  "format-factory-downloads/v0.1.0/Format-Factory_0.1.0_windows-x64-setup.exe" \
-  --file "ruta/al/Format-Factory_0.1.0_windows-x64-setup.exe" --remote
+  "format-factory-downloads/v0.1.3/Format-Factory_0.1.3_windows-x64-setup.exe" \
+  --file "ruta/al/Format-Factory_0.1.3_windows-x64-setup.exe" --remote
 ```
 
 La landing construye las URLs como
