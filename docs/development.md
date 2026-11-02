@@ -37,7 +37,10 @@ it prints the manual steps for your OS.
 | `pnpm test` | TS tests only. |
 | `pnpm test:rust` | Rust tests only (includes a real conversion). |
 | `pnpm lint:yaml` | Parses every workflow and template. |
-| `pnpm release patch` | Publishes a new version (see [release.md](./release.md)). |
+| `pnpm release:patch` | Bump the patch version and push the current branch. |
+| `pnpm release:minor` | Bump the minor version and push the current branch. |
+| `pnpm release:major` | Bump the major version and push the current branch. |
+| `pnpm release:set x.y.z` | Set an exact version and push the current branch. |
 | `pnpm setup:binaries` | Re-provisions the FFmpeg sidecars. |
 
 ## Two ways to develop

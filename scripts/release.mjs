@@ -1,17 +1,18 @@
 #!/usr/bin/env node
 /**
- * Bumps the app version, commits it and pushes to master.
+ * Bumps the app version, commits it and pushes the CURRENT branch.
  *
- * CI takes it from there: if no release exists for that version, it builds the
- * three installers and publishes them. The tag is created by CI, never here.
- *
- * Se ejecuta SIEMPRE desde master, limpio y al día: el push va directo a la
- * rama principal, así que publicar desde una rama de trabajo arrastraría sus
- * commits sin revisión.
+ * Meant for a release branch: bump here, open a pull request, and CI publishes
+ * once the merge lands on master.
  *
  * Usage:
- *   pnpm release patch
- *   pnpm release minor --no-push
+ *   pnpm release:patch        # 0.1.3 -> 0.1.4
+ *   pnpm release:minor        # 0.1.3 -> 0.2.0
+ *   pnpm release:major        # 0.1.3 -> 1.0.0
+ *   pnpm release:set 1.2.3    # exact version
+ *
+ * Flags:
+ *   --no-push   commit only, do not push
  */
 import { execFileSync } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
@@ -20,55 +21,38 @@ import process from "node:process";
 
 const root = path.resolve(import.meta.dirname, "..");
 const BUMPS = ["patch", "minor", "major"];
-const type = process.argv[2];
-const noPush = process.argv.includes("--no-push");
 
-if (!BUMPS.includes(type)) {
-  console.error(`✖ Uso: node scripts/release.mjs <${BUMPS.join("|")}> [--no-push]`);
-  process.exit(1);
-}
+const args = process.argv.slice(2);
+const noPush = args.includes("--no-push");
+const positional = args.filter((arg) => !arg.startsWith("--"));
 
-const git = (...args) =>
-  execFileSync("git", args, { cwd: root, stdio: "inherit" });
-
-const gitOutput = (...args) =>
-  execFileSync("git", args, { cwd: root, encoding: "utf8" }).trim();
+const type = positional[0];
+const explicitVersion = positional[1];
 
 function fail(message) {
   console.error(`✖ ${message}`);
   process.exit(1);
 }
 
-/* ------------------------------------------------------------------ */
-/* Preflight: nunca publicar desde el sitio equivocado                 */
-/* ------------------------------------------------------------------ */
+if (!BUMPS.includes(type) && type !== "set") {
+  fail(
+    "uso: pnpm release:patch | release:minor | release:major | release:set <x.y.z>",
+  );
+}
+
+const git = (...params) =>
+  execFileSync("git", params, { cwd: root, stdio: "inherit" });
+
+const gitOutput = (...params) =>
+  execFileSync("git", params, { cwd: root, encoding: "utf8" }).trim();
 
 const branch = gitOutput("rev-parse", "--abbrev-ref", "HEAD");
-if (branch !== "master") {
-  fail(
-    `estás en "${branch}". Los releases se publican desde master.\n` +
-      `  git checkout master && git pull && pnpm release ${type}`,
-  );
+if (branch === "HEAD") {
+  fail("estás en detached HEAD. Crea o cámbiate a una rama primero.");
 }
 
-if (gitOutput("status", "--porcelain", "--untracked-files=no")) {
-  fail(
-    "hay cambios sin commitear. Haz commit o guárdalos antes de publicar:\n" +
-      "  git status",
-  );
-}
-
-try {
-  git("fetch", "origin", "master");
-} catch {
-  fail("no se pudo contactar con origin. Revisa tu conexión.");
-}
-
-const behind = Number(gitOutput("rev-list", "--count", "HEAD..origin/master"));
-if (behind > 0) {
-  fail(`tu master está ${behind} commit(s) por detrás de origin. Ejecuta git pull.`);
-}
-
+/* ------------------------------------------------------------------ */
+/* Work out the next version                                          */
 /* ------------------------------------------------------------------ */
 
 function bump(version, kind) {
@@ -78,19 +62,32 @@ function bump(version, kind) {
   return `${major}.${minor}.${patch + 1}`;
 }
 
+function parseExplicit(value) {
+  if (!value) fail("falta la versión. Ejemplo: pnpm release:set 1.2.3");
+
+  const clean = value.replace(/^v/i, "");
+  if (!/^\d+\.\d+\.\d+$/.test(clean)) {
+    fail(`"${value}" no es una versión válida. Usa el formato x.y.z`);
+  }
+  return clean;
+}
+
 const packagePath = path.join(root, "package.json");
 const raw = readFileSync(packagePath, "utf8");
 const pkg = JSON.parse(raw);
-
 const current = pkg.version;
-const next = bump(current, type);
+
+const next = type === "set" ? parseExplicit(explicitVersion) : bump(current, type);
+
+if (next === current) {
+  fail(`la versión ya es ${current}`);
+}
+
+/* ------------------------------------------------------------------ */
 
 // Preserve the original formatting: only the version line changes.
 const updated = raw.replace(/("version":\s*")[^"]+(")/, `$1${next}$2`);
-
-if (updated === raw) {
-  fail("no se pudo actualizar la versión en package.json");
-}
+if (updated === raw) fail("no se pudo actualizar la versión en package.json");
 
 writeFileSync(packagePath, updated);
 console.log(`✔ ${current} → ${next}`);
@@ -104,17 +101,12 @@ git("add", "package.json", "src-tauri/Cargo.toml", "src-tauri/Cargo.lock");
 git("commit", "-m", `chore(release): v${next}`);
 
 if (noPush) {
-  console.log("\n✔ Commit creado. Sin push (--no-push).");
-  console.log("  git push origin master");
+  console.log(`\n✔ Commit creado en ${branch}. Sin push (--no-push).`);
   process.exit(0);
 }
 
-git("push", "origin", "HEAD:master");
+git("push", "--set-upstream", "origin", branch);
 
-const remote = gitOutput("remote", "get-url", "origin")
-  .replace(/\.git$/, "")
-  .replace(/^git@github\.com:/, "https://github.com/");
-
-console.log(`\n✔ v${next} publicado en master.`);
-console.log("  CI compilará Windows, Linux y macOS y creará el release.");
-console.log(`  ${remote}/releases`);
+console.log(`\n✔ v${next} listo en ${branch}.`);
+console.log("  Abre un pull request a master.");
+console.log("  El release se publica cuando el merge llegue a master y CI vea la versión nueva.");

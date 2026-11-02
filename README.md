@@ -88,20 +88,33 @@ exactamente eso en paralelo y sube los artefactos como descarga.
 ## Publicar una versión
 
 ```bash
-pnpm release patch     # 0.1.0 → 0.1.1
-pnpm release minor     # 0.1.1 → 0.2.0
-pnpm release major     # 0.2.0 → 1.0.0
+pnpm release:patch     # 0.1.3 → 0.1.4
+pnpm release:minor     # 0.1.3 → 0.2.0
+pnpm release:major     # 0.1.3 → 1.0.0
+pnpm release:set 1.0.0 # versión exacta
 ```
 
-Actualiza `package.json` (única fuente de verdad, `tauri.conf.json` apunta a él),
-sincroniza `Cargo.toml`, hace commit `chore(release): vX` y pushea a `master`.
+Cada comando actualiza `package.json` (única fuente de verdad, `tauri.conf.json`
+apunta a él), sincroniza `Cargo.toml`, hace commit `chore(release): vX` y
+pushea **la rama actual**, no master.
+
+El flujo recomendado:
+
+```bash
+git checkout -b release/0.1.4
+pnpm release:patch
+# abre un PR a master
+```
+
+CI valida los tres sistemas en el PR y **publica cuando el merge llega a
+master**. Un PR nunca publica, aunque lleve una versión nueva.
 
 El workflow [`.github/workflows/build.yml`](./.github/workflows/build.yml):
 
 1. lee la versión y comprueba si `vX` ya existe;
 2. compila Windows, Linux y macOS en paralelo y corre los tests en cada uno;
-3. si la versión es nueva, crea el release con nombres normalizados,
-   `SHA256SUMS.txt` e `INSTALL.md`.
+3. si la versión es nueva y el push es a master, crea el release con nombres
+   normalizados, `SHA256SUMS.txt` e `INSTALL.md`.
 
 Si la versión no cambió, CI compila igual para verificar pero **no toca** el
 release publicado. Para republicar a mano: Actions → *Release* → marcar `force`.

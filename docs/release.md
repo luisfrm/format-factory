@@ -16,24 +16,39 @@ When it does not change, CI builds everything and publishes nothing.
 
 ## Publishing
 
+One command per segment:
+
 ```bash
-git checkout master
-git pull
-pnpm release patch     # 0.1.3 → 0.1.4
+pnpm release:patch      # 0.1.3 → 0.1.4
+pnpm release:minor      # 0.1.3 → 0.2.0
+pnpm release:major      # 0.1.3 → 1.0.0
+pnpm release:set 2.0.0  # exact version
 ```
 
-`scripts/release.mjs` refuses to run unless:
+Each one bumps `package.json`, syncs `Cargo.toml`, commits
+`chore(release): vX.Y.Z` and pushes **the current branch**.
 
-- you are on `master`,
-- there are no uncommitted tracked files,
-- your `master` is not behind `origin/master`.
+### The branch flow
 
-That guard exists because the script pushes **straight to master**. Publishing
-from a feature branch would drag unmerged commits into the main branch. Use
-`--no-push` if you only want the commit.
+```bash
+git checkout -b release/0.1.4
+pnpm release:patch
+# the branch is pushed; open a pull request
+```
 
-Then it bumps `package.json`, syncs `Cargo.toml`, commits
-`chore(release): vX.Y.Z` and pushes.
+The PR runs the full matrix on all three systems. When it merges into `master`,
+the push to `master` carries the new version — and that is when CI publishes.
+
+Two rules make this safe:
+
+- A pull request never publishes, even if it contains a new version.
+- The workflow refuses to publish from any branch other than `master`.
+
+`--no-push` keeps the commit local. The script also refuses to run on a detached
+HEAD, because there is no branch to push.
+
+It does **not** check whether your tree is clean: the commit only includes
+`package.json`, `Cargo.toml` and `Cargo.lock`, so other files stay untouched.
 
 ## What CI does
 
@@ -133,7 +148,7 @@ job stops with a clear message and tells you to bump the version.
 ## Checklist before publishing
 
 - [ ] `pnpm check` passes locally
-- [ ] The PR is merged and `master` is green
-- [ ] You are on `master` and up to date
-- [ ] The version bump matches what you intend (`patch`, `minor`, `major`)
+- [ ] The release branch is based on an up-to-date `master`
+- [ ] The bump matches what you intend (`patch`, `minor`, `major` or `set`)
+- [ ] The PR is merged and the merge run is green
 - [ ] Nothing sensitive is staged (`git status`)

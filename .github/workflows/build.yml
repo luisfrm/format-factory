@@ -61,6 +61,13 @@ jobs:
             exit 0
           fi
 
+          # Releases only ship from master, whatever triggered the run.
+          if [ "${{ github.event_name }}" = "push" ] && [ "${GITHUB_REF}" != "refs/heads/master" ]; then
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Solo se publica desde master."
+            exit 0
+          fi
+
           if [ "${{ inputs.force }}" = "true" ]; then
             echo "publish=true" >> "$GITHUB_OUTPUT"
             exit 0
