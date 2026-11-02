@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Format Factory — portada</title>
+    <style>
+      :root {
+        --bg: #0f1117;
+        --surface: #181b22;
+        --surface-2: #212631;
+        --border: rgba(255, 255, 255, 0.08);
+        --accent: #f43f5e;
+        --accent-bright: #ff516a;
+        --info: #38bdf8;
+        --success: #10b981;
+        --text: #e2e2eb;
+        --muted: #9aa1b2;
+        --subtle: #6f7686;
+      }
+
+      * { box-sizing: border-box; }
+
+      html, body {
+        margin: 0;
+        width: 1280px;
+        height: 640px;
+        overflow: hidden;
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .canvas {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        padding: 64px 72px;
+        gap: 48px;
+      }
+
+      .dots {
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(rgba(255, 255, 255, 0.055) 1px, transparent 1px);
+        background-size: 18px 18px;
+      }
+
+      .glow {
+        position: absolute;
+        width: 720px;
+        height: 720px;
+        right: -220px;
+        top: -320px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(244, 63, 94, 0.22), transparent 62%);
+        filter: blur(8px);
+      }
+
+      .glow-2 {
+        position: absolute;
+        width: 520px;
+        height: 520px;
+        left: -220px;
+        bottom: -280px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(56, 189, 248, 0.10), transparent 65%);
+      }
+
+      .left { position: relative; display: flex; flex-direction: column; }
+
+      .eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: "Cascadia Code", ui-monospace, monospace;
+        font-size: 11px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--accent);
+        font-weight: 600;
+      }
+
+      .eyebrow .dot {
+        width: 6px; height: 6px; border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 12px var(--accent);
+      }
+
+      .eyebrow .muted { color: var(--subtle); }
+
+      h1 {
+        margin: 22px 0 0;
+        font-size: 76px;
+        line-height: 0.98;
+        letter-spacing: -0.035em;
+        font-weight: 650;
+        color: #fff;
+      }
+
+      h1 .thin { color: var(--muted); font-weight: 400; }
+
+      .sub {
+        margin: 22px 0 0;
+        max-width: 470px;
+        font-size: 17px;
+        line-height: 1.5;
+        color: var(--muted);
+      }
+
+      .stats {
+        margin-top: auto;
+        display: flex;
+        gap: 34px;
+        align-items: flex-end;
+      }
+
+      .stat .value {
+        font-family: "Cascadia Code", ui-monospace, monospace;
+        font-size: 24px;
+        font-weight: 700;
+        color: #fff;
+        letter-spacing: -0.02em;
+      }
+
+      .stat .label {
+        margin-top: 4px;
+        font-family: "Cascadia Code", ui-monospace, monospace;
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--subtle);
+      }
+
+      .stat.highlight .value { color: var(--accent-bright); }
+
+      .divider {
+        width: 1px;
+        height: 34px;
+        background: var(--border);
+        align-self: center;
+      }
+
+      .right {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 12px;
+      }
+
+      .card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        padding: 16px 18px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: linear-gradient(180deg, rgba(33, 38, 49, 0.95), rgba(24, 27, 34, 0.95));
+        box-shadow: 0 18px 40px -24px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      }
+
+      .pair { display: flex; align-items: center; gap: 12px; }
+
+      .fmt {
+        font-family: "Cascadia Code", ui-monospace, monospace;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        padding: 5px 9px;
+        border-radius: 6px;
+        border: 1px solid rgba(244, 63, 94, 0.32);
+        background: rgba(244, 63, 94, 0.12);
+        color: var(--accent-bright);
+      }
+
+      .fmt.audio {
+        border-color: rgba(56, 189, 248, 0.32);
+        background: rgba(56, 189, 248, 0.10);
+        color: var(--info);
+      }
+
+      .fmt.doc {
+        border-color: rgba(16, 185, 129, 0.32);
+        background: rgba(16, 185, 129, 0.10);
+        color: var(--success);
+      }
+
+      .arrow { color: var(--subtle); font-size: 14px; }
+
+      .note {
+        font-family: "Cascadia Code", ui-monospace, monospace;
+        font-size: 10px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--subtle);
+      }
+
+      .url {
+        position: absolute;
+        left: 72px;
+        bottom: 26px;
+        font-family: "Cascadia Code", ui-monospace, monospace;
+        font-size: 11px;
+        letter-spacing: 0.06em;
+        color: var(--subtle);
+      }
+
+      .url b { color: var(--muted); font-weight: 600; }
+    </style>
+  </head>
+  <body>
+    <div class="canvas">
+      <div class="dots"></div>
+      <div class="glow"></div>
+      <div class="glow-2"></div>
+
+      <div class="left">
+        <div class="eyebrow">
+          <span class="dot"></span>
+          Open source
+          <span class="muted">/</span>
+          Tauri + Rust + React
+        </div>
+
+        <h1>Format<br />Factory</h1>
+
+        <p class="sub">
+          Conversor de video y audio para escritorio. Lotes completos,
+          progreso real de FFmpeg y actualizaciones firmadas.
+        </p>
+
+        <div class="stats">
+          <div class="stat highlight">
+            <div class="value">10 MB</div>
+            <div class="label">el ejecutable</div>
+          </div>
+          <div class="divider"></div>
+          <div class="stat">
+            <div class="value">3 SO</div>
+            <div class="label">Windows · macOS · Linux</div>
+          </div>
+          <div class="divider"></div>
+          <div class="stat">
+            <div class="value">122</div>
+            <div class="label">tests en CI</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="right">
+        <div class="card">
+          <div class="pair">
+            <span class="fmt">MKV</span>
+            <span class="arrow">→</span>
+            <span class="fmt">MP4</span>
+          </div>
+          <span class="note">H.264</span>
+        </div>
+
+        <div class="card">
+          <div class="pair">
+            <span class="fmt">MP4</span>
+            <span class="arrow">→</span>
+            <span class="fmt audio">MP3</span>
+          </div>
+          <span class="note">320 kbps</span>
+        </div>
+
+        <div class="card">
+          <div class="pair">
+            <span class="fmt audio">M4A</span>
+            <span class="arrow">→</span>
+            <span class="fmt doc">FLAC</span>
+          </div>
+          <span class="note">sin pérdida</span>
+        </div>
+
+        <div class="card">
+          <div class="pair">
+            <span class="fmt">MOV</span>
+            <span class="arrow">→</span>
+            <span class="fmt">WEBM</span>
+          </div>
+          <span class="note">VP9</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="url"><b>github.com/luisfrm/format-factory</b> · MIT</div>
+  </body>
+</html>
